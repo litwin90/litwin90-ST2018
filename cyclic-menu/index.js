@@ -8,3 +8,5 @@ menuElement.append(parent);
 setTimeout(menuElement.setActiveClassTo.bind(menuElement), 3000, 3);
 
 menuElement.setActiveClassTo(2);
+
+setTimeout(menuElement.removeItem.bind(menuElement), 5000, 3);

@@ -1,4 +1,4 @@
-import isNumber from './isNumder';
+import isNumber from './isNumder.js';
 
 export default function createCorrectNumber(num, arr) {
     let correctNumber = num;

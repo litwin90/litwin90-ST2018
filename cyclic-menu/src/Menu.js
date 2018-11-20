@@ -1,5 +1,5 @@
 import MenuItem from './MenuItem.js';
-import createCorrectNumber from './createCorrectNumber';
+import createCorrectNumber from './createCorrectNumber.js';
 
 export default class Menu {
     constructor(array) {
@@ -26,5 +26,12 @@ export default class Menu {
         this.items[this.activeItem].classList.remove('active');
         this.activeItem = num;
         this.items[this.activeItem].classList.toggle('active');
+    }
+
+    removeItem(menuElementNumber = 0) {
+        const num = createCorrectNumber(menuElementNumber, this.items);
+        this.items[num].remove();
+        this.items.splice(num, 1);
+        this.setActiveClassTo(num);
     }
 }
