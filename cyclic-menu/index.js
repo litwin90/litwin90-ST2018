@@ -13,4 +13,6 @@ setTimeout(menuElement.removeItem.bind(menuElement), 5000, 7);
 
 setTimeout(menuElement.addItemToPosition.bind(menuElement), 7000, 6);
 
+setTimeout(menuElement.addItem.bind(menuElement), 9000, 'Added item');
+
 setTimeout(menuElement.removeItems.bind(menuElement), 12000);

@@ -41,10 +41,14 @@ export default class Menu {
         this.items = [];
     }
 
-    addItemToPosition(position = 0, text = 'new Item', href = '#') {
+    addItemToPosition(position = 0, text = 'New Item', href = '#') {
         const correctedPosition = createCorrectNumber(position, this.items);
         this.items.splice(correctedPosition, 0, new MenuItem(text, href));
         this.menuContainer.insertBefore(this.items[correctedPosition],
             this.items[correctedPosition + 1]);
+    }
+
+    addItem(text = 'New Item', href = '#') {
+        this.addItemToPosition(this.items.length, text, href);
     }
 }
