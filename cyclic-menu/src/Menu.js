@@ -22,7 +22,7 @@ export default class Menu {
     }
 
     setActiveClassTo(menuElementNumber = 0) {
-        const num = createCorrectNumber(menuElementNumber, this.items)
+        const num = createCorrectNumber(menuElementNumber, this.items);
         this.items[this.activeItem].classList.remove('active');
         this.activeItem = num;
         this.items[this.activeItem].classList.toggle('active');
@@ -33,5 +33,10 @@ export default class Menu {
         this.items[num].remove();
         this.items.splice(num, 1);
         this.setActiveClassTo(num);
+    }
+
+    removeItems() {
+        this.items.forEach((element) => { element.remove(); });
+        this.items = [];
     }
 }
