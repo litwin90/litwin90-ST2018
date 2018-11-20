@@ -1,4 +1,5 @@
 import MenuItem from './MenuItem.js';
+import createCorrectNumber from './createCorrectNumber';
 
 export default class Menu {
     constructor(array) {
@@ -21,18 +22,9 @@ export default class Menu {
     }
 
     setActiveClassTo(menuElementNumber = 0) {
-        let num = menuElementNumber;
-        if (typeof num === 'number' && !Number.isNaN(num)) {
-            if (num < 0) {
-                num = 0;
-            } else if (num > this.items.length) {
-                num %= this.items.length;
-            }
-        } else {
-            num = 0;
-        }
+        const num = createCorrectNumber(menuElementNumber, this.items)
         this.items[this.activeItem].classList.remove('active');
-        this.activeItem = menuElementNumber;
+        this.activeItem = num;
         this.items[this.activeItem].classList.toggle('active');
     }
 }
