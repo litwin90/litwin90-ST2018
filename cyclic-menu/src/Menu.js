@@ -29,14 +29,22 @@ export default class Menu {
     }
 
     removeItem(menuElementNumber = 0) {
-        const num = createCorrectNumber(menuElementNumber, this.items);
+        let num = createCorrectNumber(menuElementNumber, this.items);
         this.items[num].remove();
         this.items.splice(num, 1);
+        num = createCorrectNumber(menuElementNumber, this.items);
         this.setActiveClassTo(num);
     }
 
     removeItems() {
         this.items.forEach((element) => { element.remove(); });
         this.items = [];
+    }
+
+    addItemToPosition(position = 0, text = 'new Item', href = '#') {
+        const correctedPosition = createCorrectNumber(position, this.items);
+        this.items.splice(correctedPosition, 0, new MenuItem(text, href));
+        this.menuContainer.insertBefore(this.items[correctedPosition],
+            this.items[correctedPosition + 1]);
     }
 }

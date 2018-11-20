@@ -6,7 +6,7 @@ export default function createCorrectNumber(num, arr) {
         if (correctNumber < 0) {
             correctNumber = 0;
         } else if (correctNumber > arr.length) {
-            correctNumber %= arr.length;
+            correctNumber = arr.length - 1;
         }
     } else {
         correctNumber = 0;

@@ -1,5 +1,4 @@
 import Menu from './src/Menu.js';
-import MenuItem from './src/MenuItem.js';
 
 
 const menuElement = new Menu(['Home', 'Domain', 'Hosting', 'Clients', 'Blog', 'Support']);
@@ -10,6 +9,8 @@ setTimeout(menuElement.setActiveClassTo.bind(menuElement), 3000, 3);
 
 menuElement.setActiveClassTo(2);
 
-setTimeout(menuElement.removeItem.bind(menuElement), 5000, 3);
+setTimeout(menuElement.removeItem.bind(menuElement), 5000, 7);
 
-setTimeout(menuElement.removeItems.bind(menuElement), 7000);
+setTimeout(menuElement.addItemToPosition.bind(menuElement), 7000, 6);
+
+setTimeout(menuElement.removeItems.bind(menuElement), 12000);
