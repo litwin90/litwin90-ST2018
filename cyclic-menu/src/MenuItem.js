@@ -3,13 +3,6 @@ export default class MenuItem {
         this.item = document.createElement('a');
         this.item.innerText = text;
         this.item.href = '#';
-    }
-
-    get() {
         return this.item;
-    }
-
-    valueOf() {
-        return this.get();
     }
 }
