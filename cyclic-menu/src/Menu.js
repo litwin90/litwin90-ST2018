@@ -11,4 +11,12 @@ export default class Menu {
             this.menuContainer.appendChild(element);
         });
     }
+
+    get() {
+        return this.menuContainer;
+    }
+
+    append(parent = document.querySelector('body')) {
+        parent.appendChild(this.menuContainer);
+    }
 }
