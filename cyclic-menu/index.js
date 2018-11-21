@@ -5,14 +5,16 @@ const menuElement = new Menu(['Home', 'Domain', 'Hosting', 'Clients', 'Blog', 'S
 const parent = document.querySelector('body');
 menuElement.append(parent);
 
-setTimeout(menuElement.setActiveClassTo.bind(menuElement), 3000, 3);
+menuElement.setActiveClassTo(3);
 
 menuElement.setActiveClassTo(2);
 
-setTimeout(menuElement.removeItem.bind(menuElement), 5000, 7);
+menuElement.removeItem(7);
 
-setTimeout(menuElement.addItemToPosition.bind(menuElement), 7000, 6);
+menuElement.addItemToPosition(6);
 
-setTimeout(menuElement.addItem.bind(menuElement), 9000, 'Added item');
+menuElement.addItem('Added item');
 
-setTimeout(menuElement.removeItems.bind(menuElement), 12000);
+menuElement.setItemText(menuElement.items.length - 1);
+
+// menuElement.removeItems();

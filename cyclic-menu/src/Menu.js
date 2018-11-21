@@ -1,5 +1,5 @@
 import MenuItem from './MenuItem.js';
-import createCorrectNumber from './createCorrectNumber.js';
+import isCorrect from './isCorrect.js';
 
 export default class Menu {
     constructor(array) {
@@ -21,19 +21,20 @@ export default class Menu {
         parent.appendChild(this.menuContainer);
     }
 
-    setActiveClassTo(menuElementNumber = 0) {
-        const num = createCorrectNumber(menuElementNumber, this.items);
-        this.items[this.activeItem].classList.remove('active');
-        this.activeItem = num;
-        this.items[this.activeItem].classList.toggle('active');
+    setActiveClassTo(num = 0) {
+        if (isCorrect(num, this.items)) {
+            this.items[this.activeItem].classList.remove('active');
+            this.activeItem = num;
+            this.items[this.activeItem].classList.toggle('active');
+        }
     }
 
-    removeItem(menuElementNumber = 0) {
-        let num = createCorrectNumber(menuElementNumber, this.items);
-        this.items[num].remove();
-        this.items.splice(num, 1);
-        num = createCorrectNumber(menuElementNumber, this.items);
-        this.setActiveClassTo(num);
+    removeItem(num = 0) {
+        if (isCorrect(num, this.items)) {
+            this.items[num].remove();
+            this.items.splice(num, 1);
+            this.setActiveClassTo(num - 1);
+        }
     }
 
     removeItems() {
@@ -42,13 +43,20 @@ export default class Menu {
     }
 
     addItemToPosition(position = 0, text = 'New Item', href = '#') {
-        const correctedPosition = createCorrectNumber(position, this.items);
-        this.items.splice(correctedPosition, 0, new MenuItem(text, href));
-        this.menuContainer.insertBefore(this.items[correctedPosition],
-            this.items[correctedPosition + 1]);
+        if (isCorrect(position, this.items) || position === this.items.length) {
+            this.items.splice(position, 0, new MenuItem(text, href));
+            this.menuContainer.insertBefore(this.items[position],
+                this.items[position + 1]);
+        }
     }
 
     addItem(text = 'New Item', href = '#') {
         this.addItemToPosition(this.items.length, text, href);
+    }
+
+    setItemText(num, text = 'New text') {
+        if (isCorrect(num, this.items)) {
+            this.items[num].text = text;
+        }
     }
 }
