@@ -1,14 +1,15 @@
-import MenuItem from './MenuItem.js';
+import MenuFactory from './MenuFactory.js';
 import isCorrect from './isCorrect.js';
 
 export default class Menu {
-    constructor(array) {
+    constructor(id = 'menu', buttons = []) {
         this.menuContainer = document.createElement('nav');
         this.menuContainer.id = 'menu';
-        this.items = array.map(element => new MenuItem(element));
-        this.activeItem = 0;
-        this.items[this.activeItem].classList.toggle('active');
-        this.items.forEach((element) => {
+        this.itemFactory = MenuFactory;
+        this.buttons = buttons.map(element => this.itemFactory.createButton(element));
+        this.activeButton = 0;
+        this.buttons[this.activeButton].classList.toggle('active');
+        this.buttons.forEach((element) => {
             this.menuContainer.appendChild(element);
         });
     }
@@ -17,52 +18,54 @@ export default class Menu {
         return this.menuContainer;
     }
 
-    append(parent = document.querySelector('body')) {
+    render(parent = document.body) {
         parent.appendChild(this.menuContainer);
     }
 
     setActiveClassTo(num = 0) {
-        if (isCorrect(num, this.items)) {
-            this.items[this.activeItem].classList.remove('active');
-            this.activeItem = num;
-            this.items[this.activeItem].classList.toggle('active');
+        if (isCorrect(num, this.buttons)) {
+            this.buttons[this.activeButton].classList.remove('active');
+            this.activeButton = num;
+            this.buttons[this.activeButton].classList.toggle('active');
         }
     }
 
-    removeItem(num = 0) {
-        if (isCorrect(num, this.items)) {
-            this.items[num].remove();
-            this.items.splice(num, 1);
-            this.setActiveClassTo(num - 1);
+    removeButton(num = 0) {
+        if (isCorrect(num, this.buttons)) {
+            this.buttons[num].remove();
+            this.buttons.splice(num, 1);
+            if (this.activeButton === this.buttons.length) {
+                this.setActiveClassTo(this.buttons.length - 1);
+            }
         }
     }
 
-    removeItems() {
-        this.items.forEach((element) => { element.remove(); });
-        this.items = [];
+    removebuttons() {
+        this.buttons.forEach((element) => { element.remove(); });
+        this.buttons = [];
     }
 
-    addItemToPosition(position = 0, text = 'New Item', href = '#') {
-        if (isCorrect(position, this.items) || position === this.items.length) {
-            this.items.splice(position, 0, new MenuItem(text, href));
-            this.menuContainer.insertBefore(this.items[position],
-                this.items[position + 1]);
+    addButtonToPosition(position = 0, text = 'New Item', href = '#') {
+        if (isCorrect(position, this.buttons) || position === this.buttons.length) {
+            this.buttons.splice(position, 0, this.itemFactory.createButton(text, href));
+            this.menuContainer.insertBefore(this.buttons[position],
+                this.buttons[position + 1]);
         }
     }
 
-    addItem(text = 'New Item', href = '#') {
-        this.addItemToPosition(this.items.length, text, href);
+    addButton(text = 'New Item', href = '#') {
+        this.addButtonToPosition(this.buttons.length, text, href);
     }
 
-    setItemText(num, text = 'New text') {
-        if (isCorrect(num, this.items)) {
-            this.items[num].text = text;
+    setButtonText(num, text = 'New text') {
+        if (isCorrect(num, this.buttons)) {
+            this.buttons[num].text = text;
         }
     }
 
-    setItemHref(num, href = '#') {
-        if (isCorrect(num, this.items)) {
-            this.items[num].href = href;
+    setButtonHref(num, href = '#') {
+        if (isCorrect(num, this.buttons)) {
+            this.buttons[num].href = href;
         }
     }
 }
