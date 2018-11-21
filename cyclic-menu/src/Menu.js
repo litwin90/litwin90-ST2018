@@ -59,4 +59,10 @@ export default class Menu {
             this.items[num].text = text;
         }
     }
+
+    setItemHref(num, href = '#') {
+        if (isCorrect(num, this.items)) {
+            this.items[num].href = href;
+        }
+    }
 }
