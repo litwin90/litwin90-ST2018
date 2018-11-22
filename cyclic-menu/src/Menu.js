@@ -1,12 +1,11 @@
 /* eslint-disable import/extensions */
 import Button from './Button.js';
-import isCorrect from './isCorrect.js';
+import isCorrect from './helpFunctions/isCorrect.js';
 
 export default class Menu {
-    // eslint-disable-next-line no-unused-vars
     constructor(id = 'menu', buttons = []) {
         this.menuContainer = document.createElement('nav');
-        this.menuContainer.id = 'menu';
+        this.menuContainer.id = id;
         this.buttons = buttons.map(element => this.createButton(element));
         // eslint-disable-next-line prefer-destructuring
         this.activeButton = this.buttons[0];
@@ -15,8 +14,35 @@ export default class Menu {
         this.buttons.forEach((element) => {
             this.menuContainer.appendChild(element);
         });
-        this.onWindowLoadHandler = function handler(event, parent) {
+        this.onWindowLoadHandler = function handlerOnLoad(event, parent) {
             parent.appendChild(this.menuContainer);
+            this.menuContainer.addEventListener('DOMNodeRemoved', this.onRemoveHandler.bind(null, this));
+        };
+        this.onKeyDownHandler = function handlerOnKeyDown(event) {
+            switch (event.keyCode) {
+            case 39:
+                if (this.activeButtonIndex === this.buttons.length - 1) {
+                    this.setActiveClassTo(0);
+                } else {
+                    this.setActiveClassTo(this.buttons.indexOf(this.activeButton) + 1);
+                }
+                break;
+            case 37:
+                if (this.activeButtonIndex === 0) {
+                    this.setActiveClassTo(this.buttons.length - 1);
+                } else {
+                    this.setActiveClassTo(this.activeButtonIndex - 1);
+                }
+                break;
+            case 13:
+                document.location.href = this.activeButton.href;
+                break;
+            default: break;
+            }
+        };
+        this.onRemoveHandler = function onRemoved(context) {
+            document.removeEventListener('DOMContentLoaded', context.onWindowLoadHandler);
+            document.removeEventListener('keydown', context.onKeyDownHandler);
         };
     }
 
@@ -25,10 +51,11 @@ export default class Menu {
         return new Button(text, href);
     }
 
-    // eslint-disable-next-line class-methods-use-this
     render(parent = document.querySelector('body')) {
         this.onWindowLoadHandler = this.onWindowLoadHandler.bind(this, null, parent);
-        window.onload = this.onWindowLoadHandler;
+        document.addEventListener('DOMContentLoaded', this.onWindowLoadHandler);
+        this.onKeyDownHandler = this.onKeyDownHandler.bind(this);
+        document.addEventListener('keydown', this.onKeyDownHandler);
     }
 
     setActiveClassTo(num = 0) {
@@ -38,6 +65,10 @@ export default class Menu {
             this.activeButton.classList.toggle('active');
             this.activeButtonIndex = this.buttons.indexOf(this.activeButton);
         }
+    }
+
+    removeMenu() {
+        this.menuContainer.remove();
     }
 
     removeButton(num = 0) {
