@@ -15,7 +15,8 @@ export default class Menu {
             this.menuContainer.appendChild(element);
         });
         this.onWindowLoadHandler = function handlerOnLoad(event, parent) {
-            parent.appendChild(this.menuContainer);
+            const parentFirstChild = parent.firstChild;
+            parent.insertBefore(this.menuContainer, parentFirstChild);
             this.menuContainer.addEventListener('DOMNodeRemoved', this.onRemoveHandler.bind(null, this));
         };
         this.onKeyDownHandler = function handlerOnKeyDown(event) {
