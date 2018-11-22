@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/extensions
 import Menu from './src/Menu.js';
 
-const menuElement = new Menu('menu', ['Home', 'Domain', 'Hosting', 'Clients', 'Blog', 'Support']);
+const menuElement = new Menu(['Home', 'Domain', 'Hosting', 'Clients', 'Blog', 'Support']);
 const parent = document.querySelector('body');
 menuElement.render(parent);
 menuElement.setButtonHref(0, 'https://github.com/rolling-scopes-school/RS-Short-Track/wiki');

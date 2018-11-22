@@ -3,9 +3,9 @@ import Button from './Button.js';
 import isCorrect from './helpFunctions/isCorrect.js';
 
 export default class Menu {
-    constructor(id = 'menu', buttons = []) {
+    constructor(buttons = []) {
         this.menuContainer = document.createElement('nav');
-        this.menuContainer.id = id;
+        this.menuContainer.id = 'menu';
         this.buttons = buttons.map(element => this.createButton(element));
         // eslint-disable-next-line prefer-destructuring
         this.activeButton = this.buttons[0];
