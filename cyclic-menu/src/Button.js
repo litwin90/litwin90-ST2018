@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/extensions
 import MenuItem from './MenuItem.js';
 
 export default class Button extends MenuItem {
