@@ -4,6 +4,7 @@ import isCorrect from './helpFunctions/isCorrect.js';
 
 export default class Menu {
     constructor(buttons = []) {
+        let observer;
         this.menuContainer = document.createElement('nav');
         this.menuContainer.id = 'menu';
         this.buttons = buttons.map(element => this.createButton(element));
@@ -17,7 +18,9 @@ export default class Menu {
         this.onWindowLoadHandler = function handlerOnLoad(event, parent) {
             const parentFirstChild = parent.firstChild;
             parent.insertBefore(this.menuContainer, parentFirstChild);
-            this.menuContainer.addEventListener('DOMNodeRemoved', this.onRemoveHandler.bind(null, this));
+            const config = { childList: true, subtree: true };
+            observer = new MutationObserver(this.onRemoveHandler.bind(this));
+            observer.observe(parent, config);
         };
         this.onKeyDownHandler = function handlerOnKeyDown(event) {
             switch (event.keyCode) {
@@ -41,9 +44,16 @@ export default class Menu {
             default: break;
             }
         };
-        this.onRemoveHandler = function onRemoved(context) {
-            document.removeEventListener('DOMContentLoaded', context.onWindowLoadHandler);
-            document.removeEventListener('keydown', context.onKeyDownHandler);
+        this.onRemoveHandler = function onRemoved(mutations) {
+            mutations.forEach((mutation) => {
+                const nodes = Array.from(mutation.removedNodes);
+                const directMatch = nodes.indexOf(this.menuContainer) > -1;
+                if (directMatch) {
+                    document.removeEventListener('DOMContentLoaded', this.onWindowLoadHandler);
+                    document.removeEventListener('keydown', this.onKeyDownHandler);
+                    observer.disconnect();
+                }
+            });
         };
     }
 
