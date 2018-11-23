@@ -4,7 +4,6 @@ import isCorrect from './helpFunctions/isCorrect.js';
 
 export default class Menu {
     constructor(buttons = []) {
-        let observer;
         this.menuContainer = document.createElement('nav');
         this.menuContainer.id = 'menu';
         this.buttons = buttons.map(element => this.createButton(element));
@@ -15,13 +14,6 @@ export default class Menu {
         this.buttons.forEach((element) => {
             this.menuContainer.appendChild(element);
         });
-        this.onWindowLoadHandler = function handlerOnLoad(event, parent) {
-            const parentFirstChild = parent.firstChild;
-            parent.insertBefore(this.menuContainer, parentFirstChild);
-            const config = { childList: true, subtree: true };
-            observer = new MutationObserver(this.onRemoveHandler.bind(this));
-            observer.observe(parent, config);
-        };
         this.onKeyDownHandler = function handlerOnKeyDown(event) {
             switch (event.keyCode) {
             case 39:
@@ -49,9 +41,8 @@ export default class Menu {
                 const nodes = Array.from(mutation.removedNodes);
                 const directMatch = nodes.indexOf(this.menuContainer) > -1;
                 if (directMatch) {
-                    document.removeEventListener('DOMContentLoaded', this.onWindowLoadHandler);
                     document.removeEventListener('keydown', this.onKeyDownHandler);
-                    observer.disconnect();
+                    this.observer.disconnect();
                 }
             });
         };
@@ -63,8 +54,13 @@ export default class Menu {
     }
 
     render(parent = document.querySelector('body')) {
-        this.onWindowLoadHandler = this.onWindowLoadHandler.bind(this, null, parent);
-        document.addEventListener('DOMContentLoaded', this.onWindowLoadHandler);
+        const parentFirstChild = parent.firstChild;
+        parent.insertBefore(this.menuContainer, parentFirstChild);
+
+        const config = { childList: true, subtree: true };
+        this.observer = new MutationObserver(this.onRemoveHandler.bind(this));
+        this.observer.observe(parent, config);
+
         this.onKeyDownHandler = this.onKeyDownHandler.bind(this);
         document.addEventListener('keydown', this.onKeyDownHandler);
     }
