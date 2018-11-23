@@ -64,7 +64,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "0fc6170e563bd7587fa0";
+/******/ 	var hotCurrentHash = "6ea72550b6a3c82f00c1";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1509,7 +1509,6 @@ __webpack_require__.r(__webpack_exports__);
 
 class Menu {
     constructor(buttons = []) {
-        let observer;
         this.menuContainer = document.createElement('nav');
         this.menuContainer.id = 'menu';
         this.buttons = buttons.map(element => this.createButton(element));
@@ -1520,13 +1519,6 @@ class Menu {
         this.buttons.forEach((element) => {
             this.menuContainer.appendChild(element);
         });
-        this.onWindowLoadHandler = function handlerOnLoad(event, parent) {
-            const parentFirstChild = parent.childNodes[0];
-            parent.insertBefore(this.menuContainer, parentFirstChild);
-            const config = { childList: true, subtree: true };
-            observer = new MutationObserver(this.onRemoveHandler.bind(this));
-            observer.observe(parent, config);
-        };
         this.onKeyDownHandler = function handlerOnKeyDown(event) {
             switch (event.keyCode) {
             case 39:
@@ -1554,9 +1546,8 @@ class Menu {
                 const nodes = Array.from(mutation.removedNodes);
                 const directMatch = nodes.indexOf(this.menuContainer) > -1;
                 if (directMatch) {
-                    document.removeEventListener('DOMContentLoaded', this.onWindowLoadHandler);
                     document.removeEventListener('keydown', this.onKeyDownHandler);
-                    observer.disconnect();
+                    this.observer.disconnect();
                 }
             });
         };
@@ -1568,8 +1559,13 @@ class Menu {
     }
 
     render(parent = document.querySelector('body')) {
-        this.onWindowLoadHandler = this.onWindowLoadHandler.bind(this, null, parent);
-        document.addEventListener('DOMContentLoaded', this.onWindowLoadHandler);
+        const parentFirstChild = parent.firstChild;
+        parent.insertBefore(this.menuContainer, parentFirstChild);
+
+        const config = { childList: true, subtree: true };
+        this.observer = new MutationObserver(this.onRemoveHandler.bind(this));
+        this.observer.observe(parent, config);
+
         this.onKeyDownHandler = this.onKeyDownHandler.bind(this);
         document.addEventListener('keydown', this.onKeyDownHandler);
     }
@@ -1711,20 +1707,29 @@ __webpack_require__.r(__webpack_exports__);
 // eslint-disable-next-line no-unused-vars
 
 
-const menuElement = new _Menu_js__WEBPACK_IMPORTED_MODULE_0__["default"](['Home', 'Domain', 'Hosting', 'Clients', 'Blog', 'Support']);
 
-window.addEventListener('load', () => {
+const windowOnLoad = () => {
+    const menuElement = new _Menu_js__WEBPACK_IMPORTED_MODULE_0__["default"](['Home', 'Domain', 'Hosting', 'Clients', 'Blog', 'Support']);
     const parent = document.querySelector('body');
     menuElement.render(parent);
-});
-// menuElement.render(parent);
-/* menuElement.setButtonHref(0, 'https://github.com/rolling-scopes-school/RS-Short-Track/wiki');
-menuElement.setButtonHref(1, 'https://github.com/rolling-scopes-school');
-menuElement.setButtonHref(2, 'https://github.com/rolling-scopes-school/litwin90-ST2018');
-menuElement.setButtonHref(3, 'https://docs.google.com/spreadsheets/d/1_5-nAn8OALgIqcWDPmIGB8iGDnSFXAJ1pDm1MODebCE/edit');
-menuElement.setButtonHref(4, 'https://rsshorttrack.slack.com/messages/CDTFETX26/');
-menuElement.setButtonHref(5, 'https://rsshorttrack.slack.com/messages/CDTFE7ENN/');
- */
+    menuElement.setButtonHref(0, 'https://github.com/rolling-scopes-school/RS-Short-Track/wiki');
+    menuElement.setButtonHref(1, 'https://github.com/rolling-scopes-school');
+    menuElement.setButtonHref(2, 'https://github.com/rolling-scopes-school/litwin90-ST2018');
+    menuElement.setButtonHref(3, 'https://docs.google.com/spreadsheets/d/1_5-nAn8OALgIqcWDPmIGB8iGDnSFXAJ1pDm1MODebCE/edit');
+    menuElement.setButtonHref(4, 'https://rsshorttrack.slack.com/messages/CDTFETX26/');
+    menuElement.setButtonHref(5, 'https://rsshorttrack.slack.com/messages/CDTFE7ENN/');
+
+    const config = { childList: true, subtree: true };
+    const onRemoveHandler = () => {
+        window.removeEventListener('load', windowOnLoad);
+        // eslint-disable-next-line no-use-before-define
+        observer.disconnect();
+    };
+    const observer = new MutationObserver(onRemoveHandler);
+    observer.observe(parent.parentElement, config);
+};
+
+window.addEventListener('load', windowOnLoad);
 
 
 /***/ })
