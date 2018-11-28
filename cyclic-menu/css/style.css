@@ -1,5 +1,5 @@
-#menu,
-#menu *{
+.menu,
+.menu *{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -7,7 +7,7 @@
     list-style: none;
 }
 
-#menu {
+.menu {
     width: 100%;
     overflow: hidden;
 
@@ -18,17 +18,17 @@
     font-weight: bold;
 }
 
-#menu a.active{
+.menu a.active{
     background-color: #4CAF50;
     color: white;
 }
 
-#menu a:hover {
+.menu a:hover {
     background-color: #ddd;
     color: black;
 }
 
-#menu a {
+.menu a {
     float: left;
     color: #f2f2f2;
     text-align: center;

@@ -1,12 +1,7 @@
-// eslint-disable-next-line import/extensions
-import MenuItem from './MenuItem.js';
-
-export default class Button extends MenuItem {
+export default class Button {
     constructor(text = 'New Button', href = '#') {
-        super();
         this.item = document.createElement('a');
         this.item.innerText = text;
         this.item.href = href;
-        return this.item;
     }
 }

@@ -1,11 +1,15 @@
 /* eslint-disable import/extensions */
 import Button from './Button.js';
-import isCorrect from './helpFunctions/isCorrect.js';
+import isCorrect from './helpers/isCorrect.js';
+
+function getIndex(activeButtonIndex, buttonsLength, step) {
+    return Math.abs(activeButtonIndex + step + buttonsLength) % buttonsLength;
+}
 
 export default class Menu {
     constructor(buttons = []) {
         this.menuContainer = document.createElement('nav');
-        this.menuContainer.id = 'menu';
+        this.menuContainer.className = 'menu';
         this.buttons = buttons.map(element => this.createButton(element));
         // eslint-disable-next-line prefer-destructuring
         this.activeButton = this.buttons[0];
@@ -15,22 +19,18 @@ export default class Menu {
             this.menuContainer.appendChild(element);
         });
         this.onKeyDownHandler = function handlerOnKeyDown(event) {
+            const keyLeft = 39;
+            const keyRight = 37;
+            const keyEnter = 13;
+            const step = 1;
             switch (event.keyCode) {
-            case 39:
-                if (this.activeButtonIndex === this.buttons.length - 1) {
-                    this.setActiveClassTo(0);
-                } else {
-                    this.setActiveClassTo(this.buttons.indexOf(this.activeButton) + 1);
-                }
+            case keyLeft:
+                this.setActiveClassTo(getIndex(this.activeButtonIndex, this.buttons.length, step));
                 break;
-            case 37:
-                if (this.activeButtonIndex === 0) {
-                    this.setActiveClassTo(this.buttons.length - 1);
-                } else {
-                    this.setActiveClassTo(this.activeButtonIndex - 1);
-                }
+            case keyRight:
+                this.setActiveClassTo(getIndex(this.activeButtonIndex, this.buttons.length, -step));
                 break;
-            case 13:
+            case keyEnter:
                 document.location.href = this.activeButton.href;
                 break;
             default: break;
@@ -50,7 +50,7 @@ export default class Menu {
 
     // eslint-disable-next-line class-methods-use-this
     createButton(text = 'New Button', href = '#') {
-        return new Button(text, href);
+        return (new Button(text, href)).item;
     }
 
     render(parent = document.querySelector('body')) {
