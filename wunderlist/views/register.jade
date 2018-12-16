@@ -1,0 +1,38 @@
+extends layout
+
+block content
+    form.register-form
+        .container
+            h1 Register
+            p Please fill in this form to create an account.
+            hr
+            label(for='email')
+            b Email
+            input(type='email', placeholder='Enter username', name='username', required='', minlength='3', maxlength='64', title="Email should match pattern: 'smth@smth.smth'")
+            label(for='psw')
+            b Password
+            input(type='password', placeholder='Enter Password', name='password', required='', title='Password should contain at least 8 characters, \
+            at least 1 number, \
+            at least 1 lowercase character (a-z), \
+            at least 1 uppercase character (A-Z), \
+            only 0-9a-zA-Z')
+            label(for='psw-repeat')
+            b Repeat Password
+            input(type='password', placeholder='Repeat Password', name='psw-repeat', required='' title='Password should contain at least 8 characters, \
+            at least 1 number, \
+            at least 1 lowercase character (a-z), \
+            at least 1 uppercase character (A-Z), \
+            only 0-9a-zA-Z')
+            hr
+            .git-hub
+            p
+            | By creating an account you agree to our 
+            a(href='#') Terms & Privacy
+            | .
+            button.registerbtn(type='submit') Register
+        .container.signin
+            p
+            | Already have an account? 
+            a(href='/') Sign in
+            | .
+        script(src='/javascripts/register.js')
