@@ -1,18 +1,30 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
-const debug = require('debug')('app:authRouts');
 const passport = require('passport');
 const authController = require('../controllers/authController');
 
 const authRouter = express.Router();
 
 function router() {
-    const { getSignIn, postSignIn, postSignUp } = authController();
+    const {
+        getSignIn,
+        postSignUp,
+        profileMiddlewere,
+        getProfile,
+        getTerms,
+    } = authController();
     authRouter.route('/signin')
         .get(getSignIn)
-        .post(postSignIn);
+        .post(passport.authenticate('local', {
+            successRedirect: '/auth/profile',
+            failureRedirect: '/',
+        }));
     authRouter.route('/signup')
         .post(postSignUp);
+    authRouter.route('/profile')
+        .all(profileMiddlewere)
+        .get(getProfile);
+    authRouter.route('/terms&privacy')
+        .get(getTerms);
     return authRouter;
 }
 
