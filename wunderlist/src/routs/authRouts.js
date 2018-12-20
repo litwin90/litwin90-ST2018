@@ -1,5 +1,4 @@
 const express = require('express');
-const passport = require('passport');
 const authController = require('../controllers/authController');
 
 const authRouter = express.Router();
@@ -7,6 +6,7 @@ const authRouter = express.Router();
 function router() {
     const {
         getSignIn,
+        postSignIn,
         postSignUp,
         profileMiddlewere,
         getProfile,
@@ -14,10 +14,7 @@ function router() {
     } = authController();
     authRouter.route('/signin')
         .get(getSignIn)
-        .post(passport.authenticate('local', {
-            successRedirect: '/auth/profile',
-            failureRedirect: '/',
-        }));
+        .post(postSignIn);
     authRouter.route('/signup')
         .post(postSignUp);
     authRouter.route('/profile')

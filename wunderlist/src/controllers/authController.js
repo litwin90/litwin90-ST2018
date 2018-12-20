@@ -1,50 +1,32 @@
-const { MongoClient } = require('mongodb');
 const debug = require('debug')('app:authController');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const chalk = require('chalk');
+const Account = require('../config/models/account');
 
 function authController() {
     function postSignUp(req, res) {
-        debug(`req.body: { name: ${req.body.username}, password: ${req.body.password} }`);
-        // create user
         const { username, password } = req.body;
-        const url = 'mongodb://localhost:27017';
-        const dbName = 'Wunderlist';
 
-        (async function createUser() {
-            let client;
-            try {
-                // create connection
-                client = await MongoClient.connect(url, { useNewUrlParser: true });
-
-                // set dbname
-                const db = client.db(dbName);
-
-                // smth like create table named users
-                const collection = await db.collection('users');
-                const user = { username, password };
-
-                const userInsist = await collection.findOne({ username });
-                if (!userInsist) {
-                    if (req.body.password === req.body['password-repeat']) {
-                        const result = await collection.insertOne(user);
-                        debug('new user added to db');
-
-                        // login under user name and password
-                        req.login(result.ops[0], () => {
-                            res.redirect('/auth/profile');
-                        });
+        const col = mongoose.model('Account');
+        Account.register(new Account({ username }), password, (err, account) => {
+            if (err) {
+                col.findOne({ username }, (error, user) => {
+                    if (error) {
+                        debug('cannot create accaunt');
                     } else {
-                        debug('passwords are not the same');
-                        res.json('passwords are not the same');
+                        debug(chalk.red(`user ${user.username} insist`));
                     }
-                } else {
-                    debug(`user with name ${username} already insist`);
-                    res.json('user in collection');
-                }
-            } catch (err) {
-                debug('Can not connect to mongo server');
+                });
+                return res.redirect('/');
             }
-            client.close();
-        }());
+
+            passport.authenticate('local')(req, res, () => {
+                debug('sign up sucsessfully');
+                res.redirect('/auth/profile');
+            });
+            return account;
+        });
     }
     function getSignIn(req, res) {
         res.render(
@@ -62,14 +44,21 @@ function authController() {
         }
     }
     function getProfile(req, res) {
-        res.json(req.user);
+        res.send('<h1 style="color: lightblue;"> Here gonn be your profile soon </h1>');
     }
     function getTerms(req, res) {
         res.json('There will be terms&privacy soon');
     }
+    function postSignIn(req, res) {
+        passport.authenticate('local')(req, res, () => {
+            debug('sign ip sucsessfully');
+            res.redirect('/auth/profile');
+        });
+    }
     return {
         postSignUp,
         getSignIn,
+        postSignIn,
         profileMiddlewere,
         getProfile,
         getTerms,
