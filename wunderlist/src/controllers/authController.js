@@ -44,7 +44,7 @@ function authController() {
                         passport.authenticate('local')(req, res, () => {
                             debug('sign up sucsessfully');
                             req.session.errMess = '';
-                            return res.redirect('/auth/profile');
+                            res.redirect('/auth/profile');
                         });
                         return err;
                     },
