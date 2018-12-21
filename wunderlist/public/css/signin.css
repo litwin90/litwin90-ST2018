@@ -14,6 +14,12 @@ form.login {
     box-sizing: border-box;
 }
   
+.login .error {
+  margin: 5px auto 10px auto;
+  padding: 3px 5px;
+  color: #f44336;
+}
+
   /* Set a style for all buttons */
 .login button,
 .login a.register {

@@ -12,6 +12,7 @@ function authController() {
         const passportsMatchs = password === passwordRepeat;
         if (!passportsMatchs) {
             debug(chalk.red('passports not match'));
+            req.session.errMess = 'Passports should match';
             res.redirect('/');
         } else {
             const col = mongoose.model('Account');
@@ -30,29 +31,35 @@ function authController() {
                             col.findOne({ username }, (error) => {
                                 if (error) {
                                     debug('cannot create accaunt');
+                                    req.session.errMess = 'Can not to create an accaunt';
                                 } else {
                                     debug(chalk.red(`user ${username} insist`));
-                                    debug(err);
+                                    req.session.errMess = `User ${username} insist`;
                                 }
-                            });
-                            res.redirect('/');
-                        } else {
-                            debug('accaunt sucsessfully registred');
-
-                            passport.authenticate('local')(req, res, () => {
-                                res.redirect('/auth/profile');
-                                debug('sign up sucsessfully');
+                                return res.redirect('/');
                             });
                         }
+                        debug('accaunt sucsessfully registred');
+
+                        passport.authenticate('local')(req, res, () => {
+                            debug('sign up sucsessfully');
+                            req.session.errMess = '';
+                            return res.redirect('/auth/profile');
+                        });
+                        return err;
                     },
                 );
             } else {
                 debug('validation fails');
                 if (validationError.errors.username) {
                     debug(validationError.errors.username.message);
+                    req.session.errMess = validationError.errors.username.message;
+                    return res.redirect('/auth/signup');
                 }
                 if (validationError.errors.password) {
                     debug(validationError.errors.password.message);
+                    req.session.errMess = validationError.errors.password.message;
+                    return res.redirect('/auth/signup');
                 }
                 res.redirect('/');
             }
@@ -64,6 +71,7 @@ function authController() {
             'signin',
             {
                 title: 'Wunderlist Auth',
+                err: req.session.errMess,
             },
         );
     }
@@ -78,20 +86,23 @@ function authController() {
         res.send('<h1 style="color: lightblue;"> Here gonn be your profile soon </h1>');
     }
     function getTerms(req, res) {
-        res.json('There will be terms&privacy soon');
+        res.send('<h1 style="color: lightblue;"> Here gonn be terms & privacy soon </h1>');
     }
     function postSignIn(req, res) {
         passport.authenticate('local', (err, user) => {
             if (err) {
                 debug('uncorrect username or password');
+                req.session.errMess = 'Uncorrect username or password';
                 return res.redirect('/auth/signin');
             }
             req.logIn(user, (error) => {
                 if (error) {
                     debug('uncorrect username or password');
+                    req.session.errMess = 'Uncorrect username or password';
                     return res.redirect('/auth/signin');
                 }
                 debug('sign in sucsessfully');
+                req.session.errMess = '';
                 return res.redirect('/auth/profile');
             });
             return user;

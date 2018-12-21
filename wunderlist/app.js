@@ -42,6 +42,7 @@ app.get('/', (req, res) => {
         'index',
         {
             title: 'Wunderlist',
+            err: req.session.errMess,
         },
     );
 });

@@ -24,6 +24,12 @@
   background: #f1f1f1;
 }
 
+.register-form .error {
+  margin: 5px auto 10px auto;
+  padding: 3px 5px;
+  color: #f44336;
+}
+
 .register-form input[type=text]:focus,
 .register-form input[type=password]:focus {
   background-color: #ddd;
