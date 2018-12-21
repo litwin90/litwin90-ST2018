@@ -8,6 +8,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const flash = require('connect-flash');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ app.use(session(
         resave: false,
     },
 ));
+app.use(flash());
 
 require('./src/config/passport.js')(app);
 

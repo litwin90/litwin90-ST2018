@@ -5,7 +5,7 @@
     "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon app.js",
+        "start": "nodemon --inspect app.js",
         "lint": "eslint app.js"
     },
     "author": "litwin90",
@@ -14,6 +14,7 @@
     "dependencies": {
         "body-parser": "^1.18.3",
         "chalk": "1.1.3",
+        "connect-flash": "^0.1.1",
         "cookie-parser": "^1.4.3",
         "debug": "^4.1.0",
         "ejs": "2.6.1",

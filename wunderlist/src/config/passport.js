@@ -12,5 +12,5 @@ module.exports = function passportConfig(app) {
     passport.serializeUser(Account.serializeUser());
     passport.deserializeUser(Account.deserializeUser());
 
-    mongoose.connect('mongodb://localhost/Wunderlist');
+    mongoose.connect('mongodb://localhost/Wunderlist', { useNewUrlParser: true });
 };
