@@ -6,27 +6,58 @@ const Account = require('../config/models/account');
 
 function authController() {
     function postSignUp(req, res) {
-        const { username, password } = req.body;
+        const { username, password, passwordRepeat } = req.body;
 
-        const col = mongoose.model('Account');
-        Account.register(new Account({ username }), password, (err, account) => {
-            if (err) {
-                col.findOne({ username }, (error, user) => {
-                    if (error) {
-                        debug('cannot create accaunt');
-                    } else {
-                        debug(chalk.red(`user ${user.username} insist`));
-                    }
-                });
-                return res.redirect('/');
+        // validation of passports matching
+        const passportsMatchs = password === passwordRepeat;
+        if (!passportsMatchs) {
+            debug(chalk.red('passports not match'));
+            res.redirect('/');
+        } else {
+            const col = mongoose.model('Account');
+
+            const accaunt = new Account({ username, password });
+            // validate according to the model
+            const validationError = accaunt.validateSync();
+            if (!validationError) {
+                debug('validation passed');
+                Account.register(
+                    { username, password },
+                    passwordRepeat,
+                    (err) => {
+                        if (err) {
+                            debug('err with registration');
+                            col.findOne({ username }, (error) => {
+                                if (error) {
+                                    debug('cannot create accaunt');
+                                } else {
+                                    debug(chalk.red(`user ${username} insist`));
+                                    debug(err);
+                                }
+                            });
+                            res.redirect('/');
+                        } else {
+                            debug('accaunt sucsessfully registred');
+
+                            passport.authenticate('local')(req, res, () => {
+                                res.redirect('/auth/profile');
+                                debug('sign up sucsessfully');
+                            });
+                        }
+                    },
+                );
+            } else {
+                debug('validation fails');
+                if (validationError.errors.username) {
+                    debug(validationError.errors.username.message);
+                }
+                if (validationError.errors.password) {
+                    debug(validationError.errors.password.message);
+                }
+                res.redirect('/');
             }
-
-            passport.authenticate('local')(req, res, () => {
-                debug('sign up sucsessfully');
-                res.redirect('/auth/profile');
-            });
-            return account;
-        });
+        }
+        return { username, password };
     }
     function getSignIn(req, res) {
         res.render(
@@ -50,10 +81,21 @@ function authController() {
         res.json('There will be terms&privacy soon');
     }
     function postSignIn(req, res) {
-        passport.authenticate('local')(req, res, () => {
-            debug('sign ip sucsessfully');
-            res.redirect('/auth/profile');
-        });
+        passport.authenticate('local', (err, user) => {
+            if (err) {
+                debug('uncorrect username or password');
+                return res.redirect('/auth/signin');
+            }
+            req.logIn(user, (error) => {
+                if (error) {
+                    debug('uncorrect username or password');
+                    return res.redirect('/auth/signin');
+                }
+                debug('sign in sucsessfully');
+                return res.redirect('/auth/profile');
+            });
+            return user;
+        })(req, res);
     }
     return {
         postSignUp,
