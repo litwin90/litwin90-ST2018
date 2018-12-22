@@ -26,14 +26,14 @@ app.use(session(
 ));
 app.use(flash());
 
-require('./src/config/passport.js')(app);
+require('../src/config/passport.js')(app);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '/public/')));
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-const authRouts = require('./src/routs/authRouts')();
+const authRouts = require('../src/routs/authRouts')();
 
 app.use('/auth', authRouts);
 
