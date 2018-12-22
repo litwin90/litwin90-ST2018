@@ -2,6 +2,7 @@ const form = document.querySelector('form.login');
 const userName = document.querySelector('.login input[type = text]');
 const psw = document.querySelector('.login input[type = password]');
 const errContainer = document.querySelector('.error');
+const gitHub = document.querySelector('.git-hub');
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();

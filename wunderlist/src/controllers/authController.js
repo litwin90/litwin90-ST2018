@@ -108,6 +108,16 @@ function authController() {
             return user;
         })(req, res);
     }
+    function github() {
+        passport.authenticate('github');
+    }
+    function githubCallBack() {
+        passport.authenticate('github', {
+            failureRedirect: '/auth/login',
+        }, (req, res) => {
+            res.redirect('/auth/profile');
+        });
+    }
     return {
         postSignUp,
         getSignIn,
@@ -115,6 +125,8 @@ function authController() {
         profileMiddlewere,
         getProfile,
         getTerms,
+        github,
+        githubCallBack,
     };
 }
 
