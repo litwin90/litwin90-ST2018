@@ -11,6 +11,8 @@ function router() {
         profileMiddlewere,
         getProfile,
         getTerms,
+        github,
+        githubCallBack,
     } = authController();
     authRouter.route('/signin')
         .get(getSignIn)
@@ -22,6 +24,10 @@ function router() {
         .get(getProfile);
     authRouter.route('/terms&privacy')
         .get(getTerms);
+    authRouter.route('/github')
+        .get(github);
+    authRouter.route('/github/callback')
+        .get(githubCallBack);
     return authRouter;
 }
 
