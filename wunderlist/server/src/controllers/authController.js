@@ -66,28 +66,6 @@ function authController() {
         }
         return { username, password };
     }
-    function getSignIn(req, res) {
-        res.render(
-            'signin',
-            {
-                title: 'Wunderlist Auth',
-                err: req.session.errMess,
-            },
-        );
-    }
-    function profileMiddlewere(req, res, next) {
-        if (req.user) {
-            next();
-        } else {
-            res.redirect('/');
-        }
-    }
-    function getProfile(req, res) {
-        res.send('<h1 style="color: lightblue;"> Here gonn be your profile soon </h1>');
-    }
-    function getTerms(req, res) {
-        res.send('<h1 style="color: lightblue;"> Here gonn be terms & privacy soon </h1>');
-    }
     function postSignIn(req, res) {
         passport.authenticate('local', (err, user) => {
             if (err) {
@@ -108,25 +86,9 @@ function authController() {
             return user;
         })(req, res);
     }
-    function github() {
-        passport.authenticate('github');
-    }
-    function githubCallBack() {
-        passport.authenticate('github', {
-            failureRedirect: '/auth/login',
-        }, (req, res) => {
-            res.redirect('/auth/profile');
-        });
-    }
     return {
         postSignUp,
-        getSignIn,
         postSignIn,
-        profileMiddlewere,
-        getProfile,
-        getTerms,
-        github,
-        githubCallBack,
     };
 }
 
