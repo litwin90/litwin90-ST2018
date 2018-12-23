@@ -1,9 +1,11 @@
-.register-form * {
+.register-form *,
+.login * {
     box-sizing: border-box;
     font-size: 15px;
 }
 
-.register-form {
+.register-form,
+.login {
     max-width: 300px;
     margin: auto;
     border: 2px solid #f1f1f1;
@@ -11,56 +13,67 @@
 }
 
 /* Add padding to containers */
-.register-form .container {
+.register-form .container,
+.login .container {
     padding: 16px;
 }
 
-.register-form h1 {
+.register-form h1,
+.login h1 {
     font-size: 20px;
 }
 
 /* Full-width input fields */
 .register-form input[type=text],
-.register-form input[type=password] {
+.register-form input[type=password],
+.login input[type=text],
+.login input[type=password] {
     width: 100%;
     padding: 10px;
-    margin: 5px 0 5px 0;
+    margin: 5px 0;
     display: inline-block;
-    border: none;
     border-radius: 5px;
     background: #f1f1f1;
     font-size: 13px;
+
+    border: 1px solid #ccc;
 }
 
-.register-form input[type=text]:focus,
-.register-form input[type=password]:focus {
-    background-color: #ddd;
-    outline: none;
-}
-
-.register-form label {
+.register-form label,
+.login label {
     position: relative;
 }
 
 /* Overwrite default styles of hr */
-.register-form hr {
+.register-form hr,
+.login hr {
     border: 1px solid #f1f1f1;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
 }
 
 /* Set a style for the submit/register button */
-.register-form .registerbtn {
+.register-form .registerbtn,
+.register-form .cancelbtn,
+.login button,
+.login a.register{
+    display: block;
     background-color: #4CAF50;
     color: white;
-    padding: 16px 20px;
+    padding: 13px 20px;
     margin: 8px 0;
     border: none;
     cursor: pointer;
     width: 100%;
     opacity: 0.9;
+    text-decoration: none;
+    text-align: center;
+    font-size: 13px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.register-form .registerbtn:hover {
+.register-form .registerbtn:hover,
+.login button:hover,
+.login a.register:hover {
     opacity:1;
 }
 
@@ -69,7 +82,8 @@
     color: dodgerblue;
 }
 
-.register-form .git-hub {
+.register-form .git-hub,
+.login .git-hub {
     position: relative;
     width: 50px;
     height: 50px;
@@ -80,11 +94,13 @@
     cursor: pointer;
 }
 
-.register-form .git-hub:hover {
+.register-form .git-hub:hover,
+.login .git-hub:hover {
     transform: scale(1.1);
 }
 
-.register-form .git-hub::after {
+.register-form .git-hub::after,
+.login .git-hub::after {
     position: absolute;
     top: 5px;
     left: 7px;
@@ -96,12 +112,14 @@
 }
 
 /* Set a grey background color and center the text of the "sign in" section */
-.register-form .signin {
+.register-form .controls,
+.login .controls {
     background-color: #f1f1f1;
     text-align: center;
 }
 
-.register-form .errorContainer {
+.register-form .errorContainer,
+.login .errorContainer {
     position: absolute;
     width: 270px;
     z-index: 10;
@@ -111,7 +129,20 @@
     background-color: white;
 }
 
-.register-form p.error {
+.register-form p.error,
+.login p.error {
     color: black;
 }
 
+.login .controls p {
+    margin: 0 auto;
+    text-align: center;
+}
+  
+/* Extra style for the cancel button (red) */
+.login button.cancelbtn,
+.register-form .cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}

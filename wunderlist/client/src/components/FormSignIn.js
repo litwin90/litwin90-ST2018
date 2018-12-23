@@ -2,7 +2,7 @@ import React from 'react';
 import Input from './Input';
 import FormControl from './FormControl';
 
-class FormSignUp extends React.Component {
+class FormSignIn extends React.Component {
     state = {
         firstName: '',
         firstNameError: '',
@@ -92,18 +92,17 @@ class FormSignUp extends React.Component {
         const {
             firstNameError,
             passwordError,
-            passwordRepeateError,
             submitError,
         } = this.state;
         return (
             <form 
-                className="App register-form"
+                className="App login"
                 onSubmit={this.onSubmit}
                 error = {submitError}
             >
                 <div className="container">
-                    <h1>Register</h1>
-                    <p>Please fill in this form to create an account.</p>
+                    <h1>SignIn</h1>
+                    <p>Please fill in this form to sign in</p>
                     <hr/>
                     <Input 
                         header="User Name" 
@@ -122,33 +121,28 @@ class FormSignUp extends React.Component {
                         onBlur = {this.onPasswordBlur}
                         error = {passwordError} 
                     ></Input>
-                    <Input header="Repeat Password" 
-                        type="password" 
-                        name="passwordRepeat"
-                        plaseHolder="Repeat password"
-                        onChange = {this.onPasswordRepeateChange}
-                        onBlur = {this.onPasswordRepeatBlur}
-                        error = {passwordRepeateError} 
-                    ></Input>
                     <hr/>
                 </div>
                 <div className="container controls">
                     <div className="git-hub"></div>
                     <FormControl
                         type="submit"
-                        value="Register" 
-                        className="registerbtn">
+                        value="Login" 
+                        className="">
                     </FormControl>
+
+                    <p>or</p>
+
+                    <a className = "register" href="/">Register</a>
                     <FormControl
                         type="reset"
                         value="Cancel" 
                         className="cancelbtn">
                     </FormControl>
-                    <p>Already have an account? <a href="/">Sign in</a>.</p>
                 </div>
             </form>
         );
     }
 }
 
-export default FormSignUp;
+export default FormSignIn;
