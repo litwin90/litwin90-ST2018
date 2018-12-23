@@ -1,6 +1,7 @@
 import React from 'react';
 import Input from './Input';
 import FormControl from './FormControl';
+import signIn from '../js/signIn';
 
 class FormSignIn extends React.Component {
     state = {
@@ -79,13 +80,11 @@ class FormSignIn extends React.Component {
     onSubmit = (e) => {
         e.preventDefault();
         const { 
+            firstName,
             password,
-            passwordRepeate,
         } = this.state;
 
-        const passwordRepeateError = this.validatePasswordsMatch(password, passwordRepeate);
-
-        return this.setState({ passwordRepeateError });
+        signIn(firstName, password);
     }
 
     render() {

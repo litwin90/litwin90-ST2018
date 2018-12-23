@@ -1,6 +1,7 @@
 import React from 'react';
 import Input from './Input';
 import FormControl from './FormControl';
+import signUp from '../js/signUp';
 
 class FormSignUp extends React.Component {
     state = {
@@ -57,7 +58,7 @@ class FormSignUp extends React.Component {
     };
 
     validateName = name => {
-        const regex = /[A-Za-z]{3,}/;
+        const regex = /^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/;
 
         return !regex.test(name)
             ? "Uncorrect user name"
@@ -65,7 +66,7 @@ class FormSignUp extends React.Component {
     }
 
     validatePassword = password => {
-        const regex = /[A-Za-z]{3,}/;
+        const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/;
 
         return !regex.test(password)
             ? "Uncorrect password"
@@ -78,14 +79,19 @@ class FormSignUp extends React.Component {
     
     onSubmit = (e) => {
         e.preventDefault();
-        const { 
+        const {
+            firstName, 
             password,
             passwordRepeate,
         } = this.state;
 
         const passwordRepeateError = this.validatePasswordsMatch(password, passwordRepeate);
 
-        return this.setState({ passwordRepeateError });
+        if (passwordRepeateError) {
+            this.setState({ passwordRepeateError });
+        } else {
+            signUp(firstName, password, passwordRepeate);
+        }
     }
 
     render() {
