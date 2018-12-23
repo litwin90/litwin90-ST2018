@@ -4,16 +4,16 @@ import FormSignIn from './FormSignIn';
 import FormSignUp from './FormSignUp';
 
 class App extends Component {
-  render() {
-    return (
-        <Router>
-            <div>
-                <Route exact path="/" component={FormSignUp} />
-                <Route path="/signin" component={FormSignIn} />
-            </div>
-        </Router>
-    );
-  }
+    render() {
+        return (
+            <Router>
+                <div>
+                    <Route exact path="/" component={FormSignUp} />
+                    <Route path="/signin" component={FormSignIn} />
+                </div>
+            </Router>
+        );
+    }
 }
 
 export default App;
