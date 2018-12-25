@@ -13,11 +13,15 @@ function router() {
         getTerms,
         github,
         githubCallBack,
+        signInUpMiddlewere,
+        getLogOut,
     } = authController();
     authRouter.route('/signin')
+        .all(signInUpMiddlewere)
         .get(getSignIn)
         .post(postSignIn);
     authRouter.route('/signup')
+        .all(signInUpMiddlewere)
         .post(postSignUp);
     authRouter.route('/profile')
         .all(profileMiddlewere)
@@ -28,6 +32,8 @@ function router() {
         .get(github);
     authRouter.route('/github/callback')
         .get(githubCallBack);
+    authRouter.route('/logout')
+        .get(getLogOut);
     return authRouter;
 }
 

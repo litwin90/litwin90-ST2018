@@ -83,7 +83,13 @@ function authController() {
         }
     }
     function getProfile(req, res) {
-        res.send('<h1 style="color: lightblue;"> Here gonn be your profile soon </h1>');
+        res.render(
+            'profile',
+            {
+                title: 'Wunderlist',
+                username: req.user.username,
+            },
+        );
     }
     function getTerms(req, res) {
         res.send('<h1 style="color: lightblue;"> Here gonn be terms & privacy soon </h1>');
@@ -108,6 +114,11 @@ function authController() {
             return user;
         })(req, res);
     }
+    function getLogOut(req, res) {
+        req.logOut();
+        debug('logout');
+        res.redirect('/');
+    }
     function github() {
         passport.authenticate('github');
     }
@@ -118,6 +129,13 @@ function authController() {
             res.redirect('/auth/profile');
         });
     }
+    function signInUpMiddlewere(req, res, next) {
+        if (req.user) {
+            res.redirect('/profile');
+        } else {
+            next();
+        }
+    }
     return {
         postSignUp,
         getSignIn,
@@ -127,6 +145,8 @@ function authController() {
         getTerms,
         github,
         githubCallBack,
+        signInUpMiddlewere,
+        getLogOut,
     };
 }
 

@@ -38,13 +38,17 @@ const authRouts = require('./src/routs/authRouts')();
 app.use('/auth', authRouts);
 
 app.get('/', (req, res) => {
-    res.render(
-        'index',
-        {
-            title: 'Wunderlist',
-            err: req.session.errMess,
-        },
-    );
+    if (req.user) {
+        res.redirect('/auth/profile');
+    } else {
+        res.render(
+            'index',
+            {
+                title: 'Wunderlist',
+                err: req.session.errMess,
+            },
+        );
+    }
 });
 
 app.listen(port, () => {
