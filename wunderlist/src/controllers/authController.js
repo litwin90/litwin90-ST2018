@@ -120,14 +120,18 @@ function authController() {
         res.redirect('/');
     }
     function github(req, res) {
-        passport.authenticate('github')(req, res);
-    }
-    function githubCallBack() {
         passport.authenticate('github', {
-            failureRedirect: '/auth/login',
-        }, (req, res) => {
-            res.redirect('/auth/profile');
-        });
+            scope: ['profile'],
+        })(req, res);
+        debug('send request to github auth');
+    }
+    function githubCallBack(req, res) {
+        debug('get response from github auth');
+        passport.authenticate('github', {
+            failureRedirect: '/auht/login',
+            successRedirect: '/auth/profile',
+        })(req, res);
+        debug('send 2nd request to github auth');
     }
     function google(req, res) {
         passport.authenticate('google', {

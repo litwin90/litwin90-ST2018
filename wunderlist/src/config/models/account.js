@@ -26,6 +26,7 @@ const Account = new Schema({
         },
     },
     googleid: String,
+    githubid: String,
 });
 
 Account.plugin(passportLocalMongoose);
