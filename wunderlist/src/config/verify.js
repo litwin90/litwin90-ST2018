@@ -1,18 +1,19 @@
-const debug = require('debug')('app:gihub verify');
-const Account = require('../models/account');
+const debug = require('debug')('app:verify');
+const Account = require('./models/account');
 
-module.exports = (accessToken, refreshToken, profile, cb) => {
+module.exports = service => (accessToken, refreshToken, profile, cb) => {
     debug('passport callback fired');
     (async function createAccaunt() {
         try {
-            let accaunt = await Account.findOne({ githubid: profile.id });
+            const id = `${service}id`;
+            let accaunt = await Account.findOne({ [id]: profile.id });
             if (accaunt) {
                 debug(`user ${accaunt.username} already insist in db`);
                 cb(null, accaunt);
             } else {
                 accaunt = await new Account({
                     username: profile.displayName,
-                    githubid: profile.id,
+                    [id]: profile.id,
                 }).save();
                 debug(`add new user to db : ${accaunt.username}`);
                 cb(null, accaunt);

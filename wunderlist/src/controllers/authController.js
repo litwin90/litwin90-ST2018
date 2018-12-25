@@ -119,33 +119,32 @@ function authController() {
         debug('logout');
         res.redirect('/');
     }
-    function github(req, res) {
-        passport.authenticate('github', {
+    function auth(req, res, service) {
+        passport.authenticate(service, {
             scope: ['profile'],
         })(req, res);
-        debug('send request to github auth');
+        debug(`send request to ${service} auth`);
+    }
+    function authCb(req, res, service) {
+        debug(`get response from ${service} auth`);
+        passport.authenticate(service, {
+            failureRedirect: '/auht/login',
+            successRedirect: '/auth/profile',
+        })(req, res);
+        debug(`send 2nd request to ${service} auth`);
+    }
+
+    function github(req, res) {
+        auth(req, res, 'github');
     }
     function githubCallBack(req, res) {
-        debug('get response from github auth');
-        passport.authenticate('github', {
-            failureRedirect: '/auht/login',
-            successRedirect: '/auth/profile',
-        })(req, res);
-        debug('send 2nd request to github auth');
+        authCb(req, res, 'github');
     }
     function google(req, res) {
-        passport.authenticate('google', {
-            scope: ['profile'],
-        })(req, res);
-        debug('send request to google auth');
+        auth(req, res, 'google');
     }
     function googleCb(req, res) {
-        debug('get response from google auth');
-        passport.authenticate('google', {
-            failureRedirect: '/auht/login',
-            successRedirect: '/auth/profile',
-        })(req, res);
-        debug('send 2nd request to google auth');
+        authCb(req, res, 'google');
     }
     function signInUpMiddlewere(req, res, next) {
         if (req.user) {

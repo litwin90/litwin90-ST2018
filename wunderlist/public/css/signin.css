@@ -45,6 +45,7 @@ form.login {
 
 .login .git-hub {
     position: relative;
+    display: inline-block;
     width: 50px;
     height: 50px;
     margin: auto;
@@ -54,7 +55,20 @@ form.login {
     cursor: pointer;
 }
 
-.login .git-hub:hover {
+.login .google {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin: auto;
+
+  background-color: #f44336;;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login .git-hub:hover,
+.login .google:hover {
     transform: scale(1.1);
 }
 
@@ -68,6 +82,18 @@ form.login {
     font-weight: bolder;
     color: white;
 }
+
+.login .google::after {
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  font-family: "FontAwesome", "Arial", sans-serif;
+  content: "\f1a0";
+  font-size: 2rem;
+  font-weight: bolder;
+  color: white;
+}
+
   /* Add a hover effect for buttons */
   .login button:hover,
   .login a.register:hover  {
