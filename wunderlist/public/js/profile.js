@@ -6,6 +6,7 @@ signOut.addEventListener('click', () => {
             await fetch('/auth/logout', {
                 method: 'GET',
             });
+            window.location.reload();
         } catch (err) {
             console.log(err);
         }

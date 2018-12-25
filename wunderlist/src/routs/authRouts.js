@@ -15,6 +15,8 @@ function router() {
         githubCallBack,
         signInUpMiddlewere,
         getLogOut,
+        google,
+        googleCb,
     } = authController();
     authRouter.route('/signin')
         .all(signInUpMiddlewere)
@@ -34,6 +36,10 @@ function router() {
         .get(githubCallBack);
     authRouter.route('/logout')
         .get(getLogOut);
+    authRouter.route('/google')
+        .get(google);
+    authRouter.route('/google/callback')
+        .get(googleCb);
     return authRouter;
 }
 

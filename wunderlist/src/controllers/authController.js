@@ -119,8 +119,8 @@ function authController() {
         debug('logout');
         res.redirect('/');
     }
-    function github() {
-        passport.authenticate('github');
+    function github(req, res) {
+        passport.authenticate('github')(req, res);
     }
     function githubCallBack() {
         passport.authenticate('github', {
@@ -128,6 +128,20 @@ function authController() {
         }, (req, res) => {
             res.redirect('/auth/profile');
         });
+    }
+    function google(req, res) {
+        passport.authenticate('google', {
+            scope: ['profile'],
+        })(req, res);
+        debug('send request to google auth');
+    }
+    function googleCb(req, res) {
+        debug('get response from google auth');
+        passport.authenticate('google', {
+            failureRedirect: '/auht/login',
+            successRedirect: '/auth/profile',
+        })(req, res);
+        debug('send 2nd request to google auth');
     }
     function signInUpMiddlewere(req, res, next) {
         if (req.user) {
@@ -137,6 +151,8 @@ function authController() {
         }
     }
     return {
+        google,
+        googleCb,
         postSignUp,
         getSignIn,
         postSignIn,
