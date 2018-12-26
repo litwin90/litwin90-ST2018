@@ -7,8 +7,11 @@ const morgan = require('morgan');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const session = require('express-session');
 const flash = require('connect-flash');
+
+const keys = require('./src/config/keys');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,6 +20,11 @@ app.use(morgan('tiny'));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(cookieSession({
+    maxAge: 24 * 60 * 60 * 1000,
+    keys: [keys.cookies.key],
+}));
+
 app.use(session(
     {
         secret: 'smthNotMatter',
