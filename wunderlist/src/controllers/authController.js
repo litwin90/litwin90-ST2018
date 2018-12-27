@@ -33,8 +33,8 @@ function authController() {
                                     debug('cannot create accaunt');
                                     req.session.errMess = 'Can not to create an accaunt';
                                 } else {
-                                    debug(chalk.red(`user ${username} insist`));
-                                    req.session.errMess = `User ${username} insist`;
+                                    debug(chalk.red(`user ${chalk.green(username)} insist`));
+                                    req.session.errMess = `User ${chalk.green(username)} insist`;
                                 }
                                 return res.redirect('/');
                             });
@@ -52,12 +52,12 @@ function authController() {
             } else {
                 debug('validation fails');
                 if (validationError.errors.username) {
-                    debug(validationError.errors.username.message);
+                    debug(chalk.red(validationError.errors.username.message));
                     req.session.errMess = validationError.errors.username.message;
                     return res.redirect('/auth/signup');
                 }
                 if (validationError.errors.password) {
-                    debug(validationError.errors.password.message);
+                    debug(chalk.red(validationError.errors.password.message));
                     req.session.errMess = validationError.errors.password.message;
                     return res.redirect('/auth/signup');
                 }
@@ -123,15 +123,15 @@ function authController() {
         passport.authenticate(service, {
             scope: ['profile'],
         })(req, res);
-        debug(`send request to ${service} auth`);
+        debug(`send request to ${chalk.green(service)} auth`);
     }
     function authCb(req, res, service) {
-        debug(`get response from ${service} auth`);
+        debug(`get response from ${chalk.green(service)} auth`);
         passport.authenticate(service, {
             failureRedirect: '/auht/login',
             successRedirect: '/auth/profile',
         })(req, res);
-        debug(`send 2nd request to ${service} auth`);
+        debug(`send 2nd request to ${chalk.green(service)} auth`);
     }
 
     function github(req, res) {

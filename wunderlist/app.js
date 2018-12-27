@@ -7,9 +7,7 @@ const morgan = require('morgan');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const cookieSession = require('cookie-session');
 const session = require('express-session');
-const flash = require('connect-flash');
 
 const keys = require('./src/config/keys');
 
@@ -20,19 +18,14 @@ app.use(morgan('tiny'));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cookieSession({
-    maxAge: 24 * 60 * 60 * 1000,
-    keys: [keys.cookies.key],
-}));
 
 app.use(session(
     {
-        secret: 'smthNotMatter',
+        secret: keys.espressSession.key,
         saveUninitialized: true,
         resave: false,
     },
 ));
-app.use(flash());
 
 require('./src/config/passport.js')(app);
 
