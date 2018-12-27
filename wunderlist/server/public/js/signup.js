@@ -1,11 +1,14 @@
+const passwordInput = document.querySelector('input[name=password]');
+const passwordRepeatInput = document.querySelector('input[name=passwordRepeat]');
 const form = document.querySelector('form');
+const userInput = document.querySelector('input[name=username]');
 const errContainer = document.querySelector('.error');
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const Username = e.target[0].value;
-    const Password = e.target[1].value;
-    const PasswordRepeat = e.target[2].value;
+    const Username = userInput.value;
+    const Password = passwordInput.value;
+    const PasswordRepeat = passwordRepeatInput.value;
 
     const passportsMatch = Password === PasswordRepeat;
     const userNameRegex = /^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/;

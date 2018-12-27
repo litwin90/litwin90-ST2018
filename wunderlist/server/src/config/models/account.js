@@ -7,7 +7,7 @@ const Account = new Schema({
         type: String,
         validate: {
             validator: (v) => {
-                const regex = /^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/;
+                const regex = /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._а-яА-Я\s]+(?<![_.])$/;
                 return regex.test(v);
             },
             message: props => `${props.value} is not a valid user name!`,
@@ -24,8 +24,9 @@ const Account = new Schema({
             },
             message: props => `${props.value} is not a valid password!`,
         },
-        required: true,
     },
+    googleid: String,
+    githubid: String,
 });
 
 Account.plugin(passportLocalMongoose);

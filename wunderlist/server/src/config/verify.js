@@ -6,7 +6,9 @@ module.exports = service => (accessToken, refreshToken, profile, cb) => {
     debug('passport callback fired');
     (async function createAccaunt() {
         try {
-            const id = `${chalk.green(service)}id`;
+            const id = `${service}id`;
+            debug(`service: ${service}`);
+            debug(`id: ${id}`);
             let accaunt = await Account.findOne({ [id]: profile.id });
             if (accaunt) {
                 debug(`user ${chalk.green(accaunt.username)} already insist in db`);
