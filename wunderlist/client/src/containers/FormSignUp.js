@@ -22,10 +22,6 @@ let FormSignUp = ({ formSignUp, dispatch }) => {
                     }
                 }
             }
-            error = {
-                formSignUp.isCorrect 
-                ? '' 
-                : 'Passwords should match, please enter correct passwors'}
         >
             <div className="container">
                 <h1>Register</h1>

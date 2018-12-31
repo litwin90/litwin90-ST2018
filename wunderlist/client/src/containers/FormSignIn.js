@@ -22,11 +22,6 @@ let FormSignIn = ({ formSignIn, dispatch }) => {
                     }
                 }
             }
-            error = {
-                formSignIn
-                ? ''
-                : 'Uncorrect data'
-            }
         >
             <div className="container">
                 <h1>SignIn</h1>
