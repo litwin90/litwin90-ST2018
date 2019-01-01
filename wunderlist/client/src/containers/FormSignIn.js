@@ -32,30 +32,32 @@ let FormSignIn = ({ formSignIn, dispatch }) => {
                     type="text" 
                     name="username"
                     plaseHolder="Enter user name" 
-                    onChange = {
-                        e => {
+                    onChange = {e => {
+                            console.log('name changed');
                             dispatch(actions.changeNameLogin(e.target.value));
-                        }
-                    }
+                    }}
                     error = {
-                        formSignIn.nameIsCorrect
-                        ? ''
-                        : 'User name is uncorrect. Please enter correct user name'
+                        formSignIn.nameIsTyped
+                        ? (formSignIn.nameIsCorrect
+                            ? ''
+                            : 'User name is uncorrect. Please enter correct user name')
+                        : ('')
                     }   
                 ></Input>
                 <Input header="Password" 
                     type="password" 
                     name="password"
                     plaseHolder="Enter password"
-                    onChange = {
-                        e => {
+                    onChange = {e => {
+                            console.log('password changed');
                             dispatch(actions.changePassword(e.target.value));
-                        }
-                    }
+                    }}
                     error = {
-                        formSignIn.pswIsCorrect
-                        ? ''
-                        : 'Password is uncorrect. Please enter correct password'
+                        formSignIn.pswIsTyped
+                        ? (formSignIn.pswIsCorrect
+                            ? ''
+                            : 'Password is uncorrect. Please enter correct password')
+                        : ('')
                     } 
                 ></Input>
                 <hr/>
@@ -75,7 +77,11 @@ let FormSignIn = ({ formSignIn, dispatch }) => {
                 <FormControl
                     type="reset"
                     value="Cancel" 
-                    className="cancelbtn">
+                    className="cancelbtn"onClick={() => {
+                        console.log('canseled');
+                        dispatch(actions.canselSignIn())
+                    }}
+                >
                 </FormControl>
             </div>
         </form>

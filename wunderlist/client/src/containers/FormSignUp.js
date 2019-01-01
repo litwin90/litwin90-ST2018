@@ -32,36 +32,47 @@ let FormSignUp = ({ formSignUp, dispatch }) => {
                     name="username"
                     plaseHolder="Enter user name" 
                     onChange = {e => {
-                        dispatch(actions.changeNameRegister(e.target.value))
+                        console.log('name changed');
+                        dispatch(actions.changeNameRegister(e.target.value));
                     }}
                     error = {
-                        formSignUp.nameIsCorrect
-                        ? '' 
-                        : 'User name is uncorrect, please enter correct user name'}   
+                        formSignUp.nameIsTyped
+                        ? (formSignUp.nameIsCorrect
+                            ? '' 
+                            : 'User name is uncorrect, please enter correct user name')
+                        : ('')
+                    }   
                 ></Input>
                 <Input header="Password" 
                     type="password" 
                     name="password"
                     plaseHolder="Enter password"
                     onChange = {e => {
-                        dispatch(actions.changePsw1(e.target.value))
+                        console.log('password1 changed');
+                        dispatch(actions.changePsw1(e.target.value));
                     }}
                     error = {
-                        formSignUp.psw1IsCorrect
-                        ? '' 
-                        : 'Password is uncorrect, please enter correct password'}
+                        formSignUp.psw1IsTyped
+                        ? (formSignUp.psw1IsCorrect
+                            ? '' 
+                            : 'Password is uncorrect, please enter correct password')
+                        : ('')
+                    }
                 ></Input>
                 <Input header="Repeat Password" 
                     type="password" 
                     name="passwordRepeat"
                     plaseHolder="Repeat password"
                     onChange = {e => {
+                        console.log('password2 changed');
                         dispatch(actions.changePsw2(e.target.value))
                     }}
                     error = {
-                        formSignUp.psw2IsCorrect && formSignUp.isCorrect
-                        ? '' 
-                        : 'Password is uncorrect, please enter correct password'
+                        formSignUp.psw2IsTyped 
+                        ? (formSignUp.psw2IsCorrect && formSignUp.isCorrect
+                            ? '' 
+                            : 'Password is uncorrect, please enter correct password') 
+                        : ('')
                     }
                 ></Input>
                 <hr/>
@@ -77,7 +88,12 @@ let FormSignUp = ({ formSignUp, dispatch }) => {
                 <FormControl
                     type="reset"
                     value="Cancel" 
-                    className="cancelbtn">
+                    className="cancelbtn"
+                    onClick={() => {
+                        console.log('canseled');
+                        dispatch(actions.canselSignUp())
+                    }}
+                >
                 </FormControl>
                 <p>Already have an account? <a href="/signin">Sign in</a>.</p>
             </div>

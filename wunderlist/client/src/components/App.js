@@ -9,6 +9,10 @@ import mainReducer from '../reducers/mainReducer';
 
 let store = createStore(mainReducer);
 
+store.subscribe(() => {
+    console.log(store.getState());
+});
+
 class App extends Component {
     render() {
         return (

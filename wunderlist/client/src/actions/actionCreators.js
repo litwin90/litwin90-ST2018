@@ -52,3 +52,15 @@ export function login() {
         url: url + config.signIn,
     }
 }
+
+export function canselSignUp() {
+    return {
+        type: actionTypes.CANSEL_SIGN_UP,
+    }
+}
+
+export function canselSignIn() {
+    return {
+        type: actionTypes.CANSEL_SIGN_IN,
+    }
+}
