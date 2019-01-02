@@ -29,7 +29,8 @@ const initialState = {
     registration: {
         userName: undefined,
         isLoggedIn: false,
-        isRegistred: false,
+        isFething: false,
+        registerErr: undefined,
     },
 }
 

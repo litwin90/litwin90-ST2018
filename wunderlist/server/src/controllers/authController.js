@@ -13,7 +13,8 @@ function authController() {
         if (!passportsMatchs) {
             debug(chalk.red('passports not match'));
             req.session.errMess = 'Passports should match';
-            res.redirect('/');
+            // res.redirect('/');
+            res.send(JSON.stringify({ error: req.session.errMess }));
         } else {
             const col = mongoose.model('Account');
 
@@ -34,18 +35,20 @@ function authController() {
                                     req.session.errMess = 'Can not to create an accaunt';
                                 } else {
                                     debug(chalk.red(`user ${chalk.green(username)} insist`));
-                                    req.session.errMess = `User ${chalk.green(username)} insist`;
+                                    req.session.errMess = `User ${username} insist`;
                                 }
-                                return res.redirect('/');
+                                // return res.redirect('/');
+                                return res.send(JSON.stringify({ error: req.session.errMess }));
+                            });
+                        } else {
+                            debug('accaunt sucsessfully registred');
+
+                            passport.authenticate('local')(req, res, () => {
+                                debug('sign up sucsessfully');
+                                req.session.errMess = '';
+                                res.send(JSON.stringify(req.user));
                             });
                         }
-                        debug('accaunt sucsessfully registred');
-
-                        passport.authenticate('local')(req, res, () => {
-                            debug('sign up sucsessfully');
-                            req.session.errMess = '';
-                            res.redirect('/auth/profile');
-                        });
                         return err;
                     },
                 );
@@ -54,14 +57,18 @@ function authController() {
                 if (validationError.errors.username) {
                     debug(chalk.red(validationError.errors.username.message));
                     req.session.errMess = validationError.errors.username.message;
-                    return res.redirect('/auth/signup');
+                    // return res.redirect('/auth/signup');
+                    return res.send(
+                        JSON.stringify({ error: validationError.errors.username.message }),
+                    );
                 }
                 if (validationError.errors.password) {
                     debug(chalk.red(validationError.errors.password.message));
                     req.session.errMess = validationError.errors.password.message;
-                    return res.redirect('/auth/signup');
+                    // return res.redirect('/auth/signup');
+                    return res.send(JSON.stringify({ error: validationError.errors.password }));
                 }
-                res.redirect('/');
+                // res.redirect('/');
             }
         }
         return { username, password };
@@ -99,17 +106,20 @@ function authController() {
             if (err) {
                 debug('uncorrect username or password');
                 req.session.errMess = 'Uncorrect username or password';
-                return res.redirect('/auth/signin');
+                // return res.redirect('/auth/signin');
+                return res.send(JSON.stringify({ error: req.session.errMess }));
             }
             req.logIn(user, (error) => {
                 if (error) {
                     debug('uncorrect username or password');
                     req.session.errMess = 'Uncorrect username or password';
-                    return res.redirect('/auth/signin');
+                    // return res.redirect('/auth/signin');
+                    return res.send(JSON.stringify({ error: req.session.errMess }));
                 }
                 debug('sign in sucsessfully');
                 req.session.errMess = '';
-                return res.redirect('/auth/profile');
+                return res.send(JSON.stringify(req.user));
+                // return res.redirect('/auth/profile');
             });
             return user;
         })(req, res);
@@ -117,7 +127,8 @@ function authController() {
     function getLogOut(req, res) {
         req.logOut();
         debug('logout');
-        res.redirect('/');
+        // res.redirect('/');
+        res.send(JSON.stringify({ isLogOuted: true }));
     }
     function auth(req, res, service) {
         passport.authenticate(service, {
@@ -127,9 +138,17 @@ function authController() {
     }
     function authCb(req, res, service) {
         debug(`get response from ${chalk.green(service)} auth`);
-        passport.authenticate(service, {
-            failureRedirect: '/auht/login',
-            successRedirect: '/auth/profile',
+        passport.authenticate(service, (err, user) => {
+            if (err) {
+                debug(`error with ${service} auth`);
+                return res.send(JSON.stringify({ error: err }));
+            }
+            if (!user) {
+                debug(`don get user in ${service} auth`);
+                return res.send(JSON.stringify({ error: err }));
+            }
+            debug(`logged in as ${user}`);
+            return res.send(JSON.stringify(user));
         })(req, res);
         debug(`send 2nd request to ${chalk.green(service)} auth`);
     }

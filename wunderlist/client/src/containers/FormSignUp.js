@@ -3,11 +3,8 @@ import Input from '../components/Input';
 import { connect } from 'react-redux'
 import FormControl from '../components/FormControl';
 import * as actions from '../actions/actionCreators';
-import config from '../config';
 
 let FormSignUp = ({ formSignUp, dispatch }) => {
-    const gitAuthUrl = `${config.server}${config.port}${config.git}`;
-    const googleAuthUrl = `${config.server}${config.port}${config.google}`;
     return (
         <form 
             className="App register-form"
@@ -15,8 +12,7 @@ let FormSignUp = ({ formSignUp, dispatch }) => {
                 e => {
                     e.preventDefault();
                     if (formSignUp.isCorrect) {
-                        console.log('Form is correct');
-                        dispatch(actions.register());
+                        dispatch(actions.fetchRegister( formSignUp.userName, formSignUp.psw1, formSignUp.psw2));
                     } else {
                         console.log('form is not correct');
                     }
@@ -78,8 +74,12 @@ let FormSignUp = ({ formSignUp, dispatch }) => {
                 <hr/>
             </div>
             <div className="container controls">
-                <a href={gitAuthUrl}><div className="git-hub"></div></a>
-                <a href={googleAuthUrl}><div className="google"></div></a>
+                <div className="git-hub" onClick={() => {
+                    dispatch(actions.fetchLoginGitHub());
+                }}></div>
+                <div className="google" onClick={() => {
+                    dispatch(actions.fetchLoginGoogle());
+                }}></div>
                 <FormControl
                     type="submit"
                     value="Register" 

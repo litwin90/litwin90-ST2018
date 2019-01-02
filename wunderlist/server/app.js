@@ -1,6 +1,7 @@
 process.env.DEBUG = 'app,app:*';
 
 const express = require('express');
+const cors = require('cors');
 const chalk = require('chalk');
 const debug = require('debug')('app');
 const morgan = require('morgan');
@@ -13,6 +14,16 @@ const keys = require('./src/config/keys');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+const whitelist = ['http://localhost:3000', 'https://github.com'];
+const corsOptions = {
+    origin: whitelist,
+    credentials: true,
+    exposedHeaders: ['Content-Length', 'Authorization', 'Content-Length', 'X-Requested-With', 'X-HTTP-Method-Override'],
+    maxAge: 36000000,
+};
+
+app.use(cors(corsOptions));
 
 app.use(morgan('tiny'));
 
