@@ -3,8 +3,15 @@ import Input from '../components/Input';
 import { connect } from 'react-redux'
 import FormControl from '../components/FormControl';
 import * as actions from '../actions/actionCreators';
+// import config from '../config';
 
-let FormSignUp = ({ formSignUp, dispatch }) => {
+let FormSignUp = ({ formSignUp, dispatch, registration }) => {
+    let displaySate;
+    if (registration.isLoggedIn) {
+        displaySate = 'none';
+    } else {
+        displaySate = 'block';
+    }
     return (
         <form 
             className="App register-form"
@@ -18,6 +25,7 @@ let FormSignUp = ({ formSignUp, dispatch }) => {
                     }
                 }
             }
+            style={{display: displaySate}}
         >
             <div className="container">
                 <h1>Register</h1>
@@ -74,12 +82,14 @@ let FormSignUp = ({ formSignUp, dispatch }) => {
                 <hr/>
             </div>
             <div className="container controls">
-                <div className="git-hub" onClick={() => {
+                <a href="/auth/github"><div className="git-hub"></div></a>
+                <a href="/auth/google"><div className="google"></div></a>
+                {/* <div className="git-hub" onClick={() => {
                     dispatch(actions.fetchLoginGitHub());
                 }}></div>
                 <div className="google" onClick={() => {
                     dispatch(actions.fetchLoginGoogle());
-                }}></div>
+                }}></div> */}
                 <FormControl
                     type="submit"
                     value="Register" 
@@ -95,7 +105,6 @@ let FormSignUp = ({ formSignUp, dispatch }) => {
                     }}
                 >
                 </FormControl>
-                <p>Already have an account? <a href="/signin">Sign in</a>.</p>
             </div>
         </form>
     );

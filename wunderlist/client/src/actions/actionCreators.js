@@ -233,20 +233,28 @@ export function fetchLoginGitHub() {
         dispatch(requestLoginGitHub());
         const loginGitHubUrl = url + config.git;
         return fetch(loginGitHubUrl, {
-            credentials: 'include',
             mode: 'no-cors',
+            credentials: 'include'
         })
-            .then(response => {
-                console.log(response);
-                return response.json()
-            })
-            .then(response => {
-            if (response.username) {
-                dispatch(receiveLoginGitHub(response))
-            } else {
-                dispatch(rejectLoginGitHub(response));
-            }
+        .then(responce => responce.json())
+        .then(response => {
+            console.log(response);
         })
+        // .then(response => {
+        //     // console.log(response);
+        //     // return response.json();
+        //     fetch('http://localhost:4000/auth/profile')
+        //     .then(response => {
+        //         document.body.innerHTML = response.text();
+        //     })
+        // });
+        // .then(response => {
+        //     if (response.username) {
+        //         dispatch(receiveLoginGitHub(response))
+        //     } else {
+        //         dispatch(rejectLoginGitHub(response));
+        //     }
+        // });
     }
 }
 
@@ -258,13 +266,13 @@ export function fetchLoginGoogle() {
             credentials: 'include',
             mode: 'no-cors',
         })
-            .then(response => response.json())
-            .then(response => {
-            if (response.username) {
-                dispatch(receiveLoginGoogle(response))
-            } else {
-                dispatch(rejectLoginGoogle(response));
-            }
-        })
+        //     .then(response => response.json())
+        //     .then(response => {
+        //     if (response.username) {
+        //         dispatch(receiveLoginGoogle(response))
+        //     } else {
+        //         dispatch(rejectLoginGoogle(response));
+        //     }
+        // })
     }
 }

@@ -4,7 +4,13 @@ import { connect } from 'react-redux'
 import FormControl from '../components/FormControl';
 import * as actions from '../actions/actionCreators';
 
-let FormSignIn = ({ formSignIn, dispatch }) => {
+let FormSignIn = ({ formSignIn, dispatch, registration }) => {
+    let displaySate;
+    if (registration.isLoggedIn) {
+        displaySate = 'none';
+    } else {
+        displaySate = 'block';
+    }
     return (
         <form 
             className="App login"
@@ -19,6 +25,7 @@ let FormSignIn = ({ formSignIn, dispatch }) => {
                     }
                 }
             }
+            style={{display: displaySate}}
         >
             <div className="container">
                 <h1>SignIn</h1>
@@ -68,17 +75,13 @@ let FormSignIn = ({ formSignIn, dispatch }) => {
                 }}></div>
                 <FormControl
                     type="submit"
-                    value="Login" 
-                    className="">
+                    value="Login">
                 </FormControl>
-
-                <p>or</p>
-
-                <a className = "register" href="/">Register</a>
                 <FormControl
                     type="reset"
                     value="Cancel" 
-                    className="cancelbtn"onClick={() => {
+                    className="cancelbtn"
+                    onClick={() => {
                         console.log('canseled');
                         dispatch(actions.canselSignIn())
                     }}

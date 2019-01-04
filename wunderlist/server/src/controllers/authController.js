@@ -137,18 +137,26 @@ function authController() {
         debug(`send request to ${chalk.green(service)} auth`);
     }
     function authCb(req, res, service) {
+        // debug(`get response from ${chalk.green(service)} auth`);
+        // passport.authenticate(service, (err, user) => {
+        //     if (err) {
+        //         debug(`error with ${service} auth`);
+        //         return res.send(JSON.stringify({ error: err }));
+        //     }
+        //     if (!user) {
+        //         debug(`don get user in ${service} auth`);
+        //         return res.send(JSON.stringify({ error: err }));
+        //     }
+        //     debug(`logged in as ${user}`);
+        //     // return res.send(JSON.stringify(user))
+        //     return res.send(JSON.stringify({ user: user.username }));
+        // })(req, res);
+        // debug(`send 2nd request to ${chalk.green(service)} auth`);
+
         debug(`get response from ${chalk.green(service)} auth`);
-        passport.authenticate(service, (err, user) => {
-            if (err) {
-                debug(`error with ${service} auth`);
-                return res.send(JSON.stringify({ error: err }));
-            }
-            if (!user) {
-                debug(`don get user in ${service} auth`);
-                return res.send(JSON.stringify({ error: err }));
-            }
-            debug(`logged in as ${user}`);
-            return res.send(JSON.stringify(user));
+        passport.authenticate(service, {
+            failureRedirect: '/auht/login',
+            successRedirect: '/auth/profile',
         })(req, res);
         debug(`send 2nd request to ${chalk.green(service)} auth`);
     }
