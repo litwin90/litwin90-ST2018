@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const { Schema } = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 
+const { ObjectId } = mongoose.Schema.Types;
+
 const Account = new Schema({
     username: {
         type: String,
@@ -27,6 +29,7 @@ const Account = new Schema({
     },
     googleid: String,
     githubid: String,
+    lists: [ObjectId],
 });
 
 Account.plugin(passportLocalMongoose);
