@@ -23,9 +23,9 @@ function router() {
         deleteTodoById,
     } = apiController();
     apiRouter.route('/account')
-        .all(accountMiddleWare)
         .post(createAccount);
     apiRouter.route('/account/me')
+        .all(accountMiddleWare)
         .get(getAccount)
         .put(updateAccount)
         .delete(deleteAccount);

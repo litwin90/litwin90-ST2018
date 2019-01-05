@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+require('mongoose-type-email');
 const { Schema } = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 
@@ -30,6 +31,7 @@ const Account = new Schema({
     googleid: String,
     githubid: String,
     lists: [ObjectId],
+    email: mongoose.SchemaTypes.Email,
 });
 
 Account.plugin(passportLocalMongoose);
