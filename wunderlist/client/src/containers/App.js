@@ -8,13 +8,6 @@ import * as actions from '../actions/actionCreators';
 // import fetch from 'isomorphic-fetch';
 
 class App extends Component {
-    // componentDidUpdate() {
-    //     fetch('http://localhost:4000/auth/profile')
-    //     .then(response => response.json())
-    //     .then(response => {
-    //         // console.log(response);
-    //     });
-    // }
     render() {
         const isLoggedIn = this.props.registration.isLoggedIn;
         console.log(this.props.registration);
