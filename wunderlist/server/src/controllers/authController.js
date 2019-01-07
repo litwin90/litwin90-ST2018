@@ -127,8 +127,7 @@ function authController() {
     function getLogOut(req, res) {
         req.logOut();
         debug('logout');
-        // res.redirect('/');
-        res.send(JSON.stringify({ isLogOuted: true }));
+        res.status(200).send('signup');
     }
     function auth(req, res, service) {
         passport.authenticate(service, {

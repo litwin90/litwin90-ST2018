@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 require('mongoose-type-email');
 const { Schema } = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
+const privateFields = require('./privateFields');
 
 const { ObjectId } = mongoose.Schema.Types;
 
