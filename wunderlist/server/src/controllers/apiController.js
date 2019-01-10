@@ -82,7 +82,6 @@ function apiController() {
 
         Account.register({ username, password }, passwordRepeat, (error) => {
             if (error) {
-                debug(error.message);
                 if (error.name === 'UserExistsError') {
                     return res.status(CONFLICT).send(error.message);
                 }
@@ -93,7 +92,6 @@ function apiController() {
             }
             passport.authenticate('local')(req, res, (err) => {
                 if (err) {
-                    debug(err.message);
                     return res.status(INTERNAL_SERVER_ERROR).send(err.message);
                 }
                 return res.status(CREATED).send('Sign up successfully');

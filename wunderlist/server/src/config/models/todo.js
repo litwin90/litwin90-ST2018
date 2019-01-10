@@ -38,7 +38,6 @@ Todo.pre('remove', function preRemove(next) {
     );
 });
 
-// I don't use arrow callback becouse it dosn't works with pre & post hooks
 // eslint-disable-next-line prefer-arrow-callback
 Todo.post('save', function postSave(todo, next) {
     // eslint-disable-next-line global-require
