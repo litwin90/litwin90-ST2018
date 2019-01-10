@@ -1,11 +1,11 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable consistent-return */
 const debug = require('debug')('app:apiController');
 const passport = require('passport');
-const mongoose = require('mongoose');
-const chalk = require('chalk');
 const Account = require('../config/models/account');
 const List = require('../config/models/list');
+const Todo = require('../config/models/todo');
 const privateFields = require('../config/models/privateFields');
 
 const {
@@ -19,155 +19,275 @@ const {
 
 function apiController() {
     function accountMiddleWare(req, res, next) {
-        if (req.user) {
-            next();
-        } else {
-            res.status(FORBIDDEN).send('User is not logged in');
+        if (!req.user) {
+            return res.status(FORBIDDEN).send('User is not logged in');
         }
+        next();
     }
-    async function createAccount(req, res, next) {
-        try {
-            const { username, password, passwordRepeat } = req.body;
-
-            // validation of passports matching
-            const passportsMatchs = password === passwordRepeat;
-            const passwordPassed = password !== undefined;
-
-            if (!passwordPassed) {
-                debug(chalk.red('Password not passed'));
-                return res.status(BAD_REQUEST).send('Please enter password');
-            }
-            if (!passportsMatchs) {
-                debug(chalk.red('Passwords not match'));
-                return res.status(BAD_REQUEST).send('Passwords not match');
-            }
-            const col = mongoose.model('Account');
-
-            const accaunt = await new Account({ username, password });
-            // validate according to the model
-            try {
-                await accaunt.validate();
-                debug('validation passed');
-                try {
-                    await Account.register({ username, password }, passwordRepeat);
-                } catch (err) {
-                    debug('err with registration');
-                    try {
-                        await col.findOne({ username });
-                    } catch (error) {
-                        debug('cannot create accaunt');
-                        return res.status(INTERNAL_SERVER_ERROR).send(error.message);
-                    }
-                    debug(chalk.red(`user ${chalk.green(username)} insist`));
-                    req.session.errMess = `User ${username} insist`;
-                    return res.status(CONFLICT).send(`User ${username} already insist`);
-                }
-                debug('accaunt sucsessfully registred');
-                await passport.authenticate('local')(req, res, next);
-                debug('sign up sucsessfully');
-                return res.status(CREATED).send('Sign up successfully');
-            } catch (validationError) {
-                debug('validation fails');
-                if (validationError.errors.username) {
-                    debug(chalk.red(validationError.errors.username.message));
-                    return res.status(BAD_REQUEST).send(validationError.errors.username.message);
-                }
-                if (validationError.errors.password) {
-                    debug(chalk.red(validationError.errors.password.message));
-                    return res.status(BAD_REQUEST).send(validationError.errors.password.message);
-                }
-            }
-        } catch (err) {
-            return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+    function listMiddleWare(req, res, next) {
+        if (!req.user) {
+            return res.status(FORBIDDEN).send('User is not logged in');
         }
+        // check if current user have requested list:
+        let currentListId;
+        if (!req.params.id) {
+            currentListId = req.params.listId;
+        } else {
+            currentListId = req.params.id;
+        }
+
+        Account.findOne({ _id: req.user._id, lists: { $in: currentListId } }, (err, account) => {
+            if (err) {
+                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+            }
+            if (!account) {
+                return res.status(FORBIDDEN).send('you have not permissions for requested list');
+            }
+            next();
+        });
+    }
+    function todoMiddleWare(req, res, next) {
+        if (!req.user) {
+            return res.status(FORBIDDEN).send('User is not logged in');
+        }
+        // check if current user has requested list:
+        const currentListId = req.params.listId;
+        Account.findOne({ _id: req.user._id, lists: { $in: currentListId } }, (err, account) => {
+            if (err) {
+                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+            }
+            if (!account) {
+                return res.status(FORBIDDEN).send('you have not permissions for requested list');
+            }
+
+            // check if requested list has requested todo:
+            const currentTodoId = req.params.id;
+            List.findOne({ _id: currentListId, todos: { $in: currentTodoId } }, (err, list) => {
+                if (err) {
+                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                }
+                if (!list) {
+                    return res.status(FORBIDDEN).send('you have not permissions for requested list');
+                }
+                next();
+            });
+        });
+    }
+    function createAccount(req, res) {
+        const { username, password, passwordRepeat } = req.body;
+
+        if (password !== passwordRepeat) {
+            return res.status(BAD_REQUEST).send('Passwords not match');
+        }
+
+        Account.register({ username, password }, passwordRepeat, (error) => {
+            if (error) {
+                debug(error.message);
+                if (error.name === 'UserExistsError') {
+                    return res.status(CONFLICT).send(error.message);
+                }
+                if (error.name === 'ValidationError') {
+                    return res.status(BAD_REQUEST).send(error.message);
+                }
+                return res.status(INTERNAL_SERVER_ERROR).send(error.message);
+            }
+            passport.authenticate('local')(req, res, (err) => {
+                if (err) {
+                    debug(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                }
+                return res.status(CREATED).send('Sign up successfully');
+            });
+        });
     }
     function getAccount(req, res) {
         return res.status(OK).json(req.user);
     }
-    async function updateAccount(req, res) {
-        try {
-            // eslint-disable-next-line no-underscore-dangle
-            const query = { _id: req.user._id };
-            const version = req.user.__v + 1;
-            const update = Object.assign({}, req.body, { __v: version });
-            const options = { runValidators: true };
+    function updateAccount(req, res) {
+        // check if user try to modify private fields like _id, hash ... :
+        if (privateFields.some(field => Object.prototype.hasOwnProperty.call(req.body, field))) {
+            return res.status(FORBIDDEN).send('you try to update forbidden fields');
+        }
 
-            // eslint-disable-next-line arrow-body-style
-            const requestIsNotCorrect = privateFields.some((field) => {
-                return Object.prototype.hasOwnProperty.call(update, field);
-            });
-
-            if (requestIsNotCorrect) {
-                return res.status(FORBIDDEN).send('you try to update forbidden fields');
+        Account.findOne({ _id: req.user._id }, (err, account) => {
+            if (err) {
+                return res.status(BAD_REQUEST).send(err.message);
             }
-
-            await Account.findOneAndUpdate(query, update, options);
-            debug('user updated');
-            return res.status(OK).send('user updated');
-        } catch (err) {
-            debug(err.message);
-            return res.status(BAD_REQUEST).send(err.message);
-        }
+            account.update(req.body, { runValidators: true }, (err) => {
+                if (err) {
+                    return res.status(BAD_REQUEST).send(err.message);
+                }
+                return res.status(OK).send('user updated');
+            });
+        });
     }
-    async function deleteAccount(req, res) {
-        try {
-            // eslint-disable-next-line no-underscore-dangle
-            const query = { _id: req.user._id };
-            await Account.findOneAndRemove(query);
-            return res.status(OK).send('user removed');
-        } catch (err) {
-            return res.status(INTERNAL_SERVER_ERROR).send(err.message);
-        }
+    function deleteAccount(req, res) {
+        Account.findById(req.user._id, (err, account) => {
+            if (err) {
+                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+            }
+            account.remove((err) => {
+                if (err) {
+                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                }
+                return res.status(OK).send('account removed');
+            });
+        });
     }
-    function listsMiddleWare(req, res, next) {
-        return accountMiddleWare(req, res, next);
-    }
-    async function createList(req, res) {
-        try {
-            // eslint-disable-next-line no-underscore-dangle
-            const currentId = req.user._id;
-            await new List({
-                users: [currentId],
-            }).save();
-            res.status(CREATED).send('list created');
-        } catch (err) {
-            res.status(INTERNAL_SERVER_ERROR).send(err.message);
-        }
+    function createList(req, res) {
+        List.create({
+            accounts: req.user._id,
+            name: req.body.name,
+        }, (err) => {
+            if (err) {
+                if (err.code === 11000) {
+                    return res.status(CONFLICT).send(err.message);
+                }
+                return res.status(BAD_REQUEST).send(err.message);
+            }
+            return res.status(CREATED).send('list created');
+        });
     }
     function getLists(req, res) {
-        return res.send(JSON.stringify({ content: 'hello' }));
+        Account.findOne({ _id: req.user._id })
+            .populate('lists')
+            .exec((err, account) => {
+                if (err) {
+                    res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                }
+                res.status(OK).json(account.lists);
+            });
     }
     function getListById(req, res) {
-        return res.send(JSON.stringify({ content: 'hello' }));
+        Account.findOne({ _id: req.user._id })
+            .populate({
+                path: 'lists',
+                match: { _id: req.params.id },
+            })
+            .exec((err, account) => {
+                if (err) {
+                    return res.status(BAD_REQUEST).send(err.message);
+                }
+                return res.status(OK).json(account.lists[0]);
+            });
     }
     function updateListById(req, res) {
-        return res.send(JSON.stringify({ content: 'hello' }));
+        // check if user try to modify private fields like _id, hash ... :
+        if (privateFields.some(field => Object.prototype.hasOwnProperty.call(req.body, field))) {
+            return res.status(FORBIDDEN).send('you try to update forbidden fields');
+        }
+
+        Account.findOne({ _id: req.user._id })
+            .populate({
+                path: 'lists',
+                match: { _id: req.params.id },
+            })
+            .exec((err, account) => {
+                if (err) {
+                    return res.status(BAD_REQUEST).send(err.message);
+                }
+                const list = account.lists[0];
+
+                list.update(req.body, { runValidators: true }, (err) => {
+                    if (err) {
+                        if (err.code === 'E11000') {
+                            return res.status(CONFLICT).send(err.message);
+                        }
+                        return res.status(BAD_REQUEST).send(err.message);
+                    }
+                    return res.status(OK).send('list updated');
+                });
+            });
     }
     function deleteListBuId(req, res) {
-        return res.send(JSON.stringify({ content: 'hello' }));
+        List.findById(req.params.id, (err, list) => {
+            if (err) {
+                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+            }
+            list.remove((err) => {
+                if (err) {
+                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                }
+                return res.status(OK).send('list removed');
+            });
+        });
     }
     function createTodos(req, res) {
-        return res;
+        const { content } = req.body;
+        new Todo({ content, list: req.params.listId }).save((err) => {
+            if (err) {
+                debug(err.message);
+                if (err.code === 11000) {
+                    return res.status(CONFLICT).send(err.message);
+                }
+                return res.status(BAD_REQUEST).send(err.message);
+            }
+            return res.status(CREATED).send('todo created');
+        });
     }
     function getTodos(req, res) {
-        return res.send(JSON.stringify({ content: 'hello' }));
+        List.findById(req.params.listId)
+            .populate('todos')
+            .exec((err, list) => {
+                if (err) {
+                    debug(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                }
+                return res.status(OK).json(list.todos);
+            });
     }
     function getTodoById(req, res) {
-        return res.send(JSON.stringify({ content: 'hello' }));
+        Todo.findById(req.params.id, (err, todo) => {
+            if (err) {
+                debug(err.message);
+                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+            }
+            return res.status(OK).json(todo);
+        });
     }
     function changeTodoById(req, res) {
-        return res.send(JSON.stringify({ content: 'hello' }));
+        // check if user try to modify private fields like _id, hash ... :
+        if (privateFields.some(field => Object.prototype.hasOwnProperty.call(req.body, field))) {
+            return res.status(FORBIDDEN).send('you try to update forbidden fields');
+        }
+
+        Todo.findById(req.params.id, (err, todo) => {
+            if (err) {
+                debug(err.message);
+                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+            }
+            todo.update(req.body, (err) => {
+                if (err) {
+                    debug(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                }
+                return res.status(OK).send('updated');
+            });
+        });
     }
     function deleteTodoById(req, res) {
-        return res.send(JSON.stringify({ content: 'hello' }));
+        Todo.findById(req.params.id)
+            .exec((err, todo) => {
+                if (err) {
+                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                }
+
+                todo.remove((err) => {
+                    if (err) {
+                        return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    }
+                    return res.status(OK).send('updated');
+                });
+            });
     }
     return {
         accountMiddleWare,
+        listMiddleWare,
+        todoMiddleWare,
         createAccount,
         getAccount,
         updateAccount,
         deleteAccount,
-        listsMiddleWare,
         createList,
         getLists,
         getListById,

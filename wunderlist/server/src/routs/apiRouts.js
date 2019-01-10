@@ -6,11 +6,12 @@ const apiRouter = express.Router();
 function router() {
     const {
         accountMiddleWare,
+        listMiddleWare,
+        todoMiddleWare,
         createAccount,
         getAccount,
         updateAccount,
         deleteAccount,
-        listsMiddleWare,
         createList,
         getLists,
         getListById,
@@ -30,17 +31,20 @@ function router() {
         .put(updateAccount)
         .delete(deleteAccount);
     apiRouter.route('/lists')
-        .all(listsMiddleWare)
+        .all(accountMiddleWare)
         .post(createList)
         .get(getLists);
     apiRouter.route('/lists/:id')
+        .all(listMiddleWare)
         .get(getListById)
         .put(updateListById)
         .delete(deleteListBuId);
     apiRouter.route('/lists/:listId/todos')
+        .all(listMiddleWare)
         .post(createTodos)
         .get(getTodos);
     apiRouter.route('/lists/:listId/todos/:id')
+        .all(todoMiddleWare)
         .get(getTodoById)
         .put(changeTodoById)
         .delete(deleteTodoById);

@@ -1,8 +1,11 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-shadow */
 const mongoose = require('mongoose');
 require('mongoose-type-email');
 const { Schema } = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
-const privateFields = require('./privateFields');
+const List = require('./list');
+const updateVersionKey = require('./updateVersionKey');
 
 const { ObjectId } = mongoose.Schema.Types;
 
@@ -28,12 +31,49 @@ const Account = new Schema({
             },
             message: props => `${props.value} is not a valid password!`,
         },
+        required: true,
     },
     googleid: String,
     githubid: String,
-    lists: [ObjectId],
+    lists: [{ type: ObjectId, ref: 'List' }],
     email: mongoose.SchemaTypes.Email,
 });
+
+Account.pre('remove', function preRemove(next) {
+    // remove lists if they have only one ref to current account:
+    const listIds = this.lists;
+    if (listIds.length > 0) {
+        listIds.forEach((listId) => {
+            List.findOne({ _id: listId }, (err, list) => {
+                if (err) {
+                    next(err);
+                }
+                // check if current list have 1 ref to account:
+                if (list.accounts.length === 1) {
+                    list.remove((err) => {
+                        if (err) {
+                            next(err);
+                        }
+                        next();
+                    });
+                }
+                List.updateOne(
+                    { _id: list._id },
+                    { $pull: { accounts: { $in: this._id } } },
+                    (err) => {
+                        if (err) {
+                            next(err);
+                        }
+                        next();
+                    },
+                );
+            });
+        });
+    }
+    next();
+});
+
+Account.pre('update', updateVersionKey);
 
 Account.plugin(passportLocalMongoose);
 
