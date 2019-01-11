@@ -1,8 +1,4 @@
-process.env.DEBUG = 'app,app:*';
-
 const express = require('express');
-const chalk = require('chalk');
-const debug = require('debug')('app');
 const morgan = require('morgan');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -34,7 +30,7 @@ app.use(express.static(path.join(__dirname, '/public/')));
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
-const authRouts = require('./src/routs/authRouts')();
+const authRouts = require('./src/routes/authRoutes')();
 
 app.use('/auth', authRouts);
 
@@ -52,6 +48,4 @@ app.get('/', (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    debug(`listening on  port ${chalk.green(port)}`);
-});
+app.listen(port);
