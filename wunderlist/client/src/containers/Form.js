@@ -63,6 +63,7 @@ class Form extends Component {
                     onChange={input.onChange}
                     error={input.error}
                     key={index}
+                    displayState={(input.error) ? 'block' : 'none'}
                 ></Input>
             );
         });
