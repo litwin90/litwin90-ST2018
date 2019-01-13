@@ -1,6 +1,5 @@
 import React from "react";
 
-// props
 const Input = ({ header, type, name, plaseHolder, onChange, onBlur, error }) => (
     <label><b>{header}</b>
         <input 

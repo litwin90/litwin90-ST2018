@@ -4,6 +4,7 @@ export default {
     signIn: '/auth/signin',
     signUp: '/auth/signup',
     signOut: '/auth/logout',
+    getSession: '/auth/profile',
     git: '/auth/github',
     google: '/auth/google',
     regexName: /^[a-zA-Z0-9](_(?!(\.|_))|\.(?!(_|\.))|[a-zA-Z0-9]){6,18}[a-zA-Z0-9]$/,
