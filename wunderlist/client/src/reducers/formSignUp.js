@@ -1,19 +1,19 @@
-import { CHANGE_NAME_SIGN_UP, CHANGE_PSW1, CHANGE_PSW2, CANCEL_SIGN_UP } from '../actions/actionTypes';
+import { CHANGE_NAME_SIGN_UP, CHANGE_PASSWORD_1, CHANGE_PASSWORD_2, CANCEL_SIGN_UP } from '../actions/actionTypes';
 import config from '../config';
-const { regexName, regexPsw } = config;
+const { regexName, regexPassword } = config;
 
 const formSignUpState = {
     userName: undefined,
-    psw1: undefined,
-    psw2: undefined,
+    password1: undefined,
+    password2: undefined,
     
     nameIsCorrect: false,
-    psw1IsCorrect: false,
-    psw2IsCorrect: false,
+    password1IsCorrect: false,
+    password2IsCorrect: false,
 
     nameIsTyped: false,
-    psw1IsTyped: false,
-    psw2IsTyped: false,
+    password1IsTyped: false,
+    password2IsTyped: false,
 
     isCorrect: false,
 }
@@ -27,21 +27,21 @@ export default function formSignUp(state = formSignUpState, action) {
                 nameIsCorrect,
                 nameIsTyped: true,
             });
-        case(CHANGE_PSW1):
-            const psw1IsCorrect = regexPsw.test(action.payload);
+        case(CHANGE_PASSWORD_1):
+            const password1IsCorrect = regexPassword.test(action.payload);
             return Object.assign({}, state, {
-                psw1: action.payload,
-                psw1IsCorrect,
-                psw1IsTyped: true,
+                password1: action.payload,
+                password1IsCorrect,
+                password1IsTyped: true,
             });
-        case(CHANGE_PSW2):
-            const psw2IsCorrect = regexPsw.test(action.payload);
-            const passwordsMatch = state.psw1 === action.payload;
+        case(CHANGE_PASSWORD_2):
+            const password2IsCorrect = regexPassword.test(action.payload);
+            const passwordsMatch = state.password1 === action.payload;
             const isCorrect = passwordsMatch && state.nameIsCorrect;
             return Object.assign({}, state, {
-                psw2: action.payload,
-                psw2IsCorrect,
-                psw2IsTyped: true,
+                password2: action.payload,
+                password2IsCorrect,
+                password2IsTyped: true,
                 isCorrect,
             });
         case(CANCEL_SIGN_UP):

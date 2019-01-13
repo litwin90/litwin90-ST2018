@@ -9,10 +9,10 @@ export function actionCreator(type, payload) {
     return { type, payload };
 }
 
-export function register(userName, psw1, psw2) {
+export function register(userName, password1, password2) {
     const configuration = {
         url: server + port + signUp,
-        data: { username: userName, password: psw1, passwordRepeat: psw2 },
+        data: { username: userName, password: password1, passwordRepeat: password2 },
         success: actionTypes.FETCH_REGISTER_SUCCESS,
         failure: actionTypes.FETCH_REGISTER_FAILURE,
         action: actionTypes.FETCH_REGISTER_REQUEST,
