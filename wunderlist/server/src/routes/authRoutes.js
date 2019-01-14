@@ -8,7 +8,6 @@ function router() {
         getSignIn,
         postSignIn,
         postSignUp,
-        profileMiddlewere,
         getProfile,
         getTerms,
         github,
@@ -26,7 +25,6 @@ function router() {
         .all(signInUpMiddlewere)
         .post(postSignUp);
     authRouter.route('/profile')
-        .all(profileMiddlewere)
         .get(getProfile);
     authRouter.route('/terms&privacy')
         .get(getTerms);

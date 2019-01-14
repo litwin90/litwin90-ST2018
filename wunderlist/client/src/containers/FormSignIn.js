@@ -1,101 +1,88 @@
-import React from 'react';
-import Input from '../components/Input';
+import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
-import FormControl from '../components/FormControl';
 import * as actions from '../actions/actionCreators';
+import { CHANGE_NAME_SIGN_IN, CHANGE_PASSWORD, CANCEL_SIGN_IN } from '../actions/actionTypes';
+import constants from './constants';
+import config from '../config';
+import Form from './Form';
 
-let FormSignIn = ({ formSignIn, dispatch, registration }) => {
-    let displaySate;
-    if (registration.isLoggedIn) {
-        displaySate = 'none';
-    } else {
-        displaySate = 'block';
+class FormSignIn extends Component {
+    render() {
+        const { display } = this.props.registration;
+        const 
+        { 
+            passwordIsTyped,
+            passwordIsCorrect,
+            nameIsTyped,
+            nameIsCorrect,
+        } = this.props.formSignIn;
+        const gitUrl = config.server + config.port + config.git;
+        const googleUrl = config.server + config.port + config.google;
+        return (
+            <Form
+                className="App login"
+                onSubmit={this.formOnSubmit.bind(this)}
+                displayState={display}
+                header="SignIn"
+                description="Please fill in this form to sign in"
+                inputs={[
+                    {
+                        header: "User Name",
+                        type: "text",
+                        name: "username",
+                        plaseHolder: "Enter user name" ,
+                        onChange: this.action.call(this, CHANGE_NAME_SIGN_IN),
+                        error: this.error.call(this, nameIsTyped, nameIsCorrect, constants.nameError),
+                    },
+                    {
+                        type: "password", 
+                        name: "password",
+                        plaseHolder: "Enter password",
+                        onChange: this.action.call(this, CHANGE_PASSWORD),
+                        error: this.error.call(this, passwordIsTyped, passwordIsCorrect, constants.passwordError ),
+                    },
+                ]}
+                gitUrl={gitUrl}
+                googleUrl={googleUrl}
+                cancel={this.action.call(this, CANCEL_SIGN_IN)}
+                submit={{
+                    text: "Login"
+                }}
+            >
+            </Form>
+        ); 
     }
-    return (
-        <form 
-            className="App login"
-            onSubmit={
-                e => {
-                    e.preventDefault();
-                    if (formSignIn.isCorrect) {
-                        console.log('form-login: data is correct');
-                        dispatch(actions.fetchLogin(formSignIn.userName, formSignIn.psw));
-                    } else {
-                        console.log('form-login: data is uncorrect');
-                    }
-                }
-            }
-            style={{display: displaySate}}
-        >
-            <div className="container">
-                <h1>SignIn</h1>
-                <p>Please fill in this form to sign in</p>
-                <hr/>
-                <Input 
-                    header="User Name" 
-                    type="text" 
-                    name="username"
-                    plaseHolder="Enter user name" 
-                    onChange = {e => {
-                            console.log('name changed');
-                            dispatch(actions.changeNameLogin(e.target.value));
-                    }}
-                    error = {
-                        formSignIn.nameIsTyped
-                        ? (formSignIn.nameIsCorrect
-                            ? ''
-                            : 'User name is uncorrect. Please enter correct user name')
-                        : ('')
-                    }   
-                ></Input>
-                <Input header="Password" 
-                    type="password" 
-                    name="password"
-                    plaseHolder="Enter password"
-                    onChange = {e => {
-                            console.log('password changed');
-                            dispatch(actions.changePassword(e.target.value));
-                    }}
-                    error = {
-                        formSignIn.pswIsTyped
-                        ? (formSignIn.pswIsCorrect
-                            ? ''
-                            : 'Password is uncorrect. Please enter correct password')
-                        : ('')
-                    } 
-                ></Input>
-                <hr/>
-            </div>
-            <div className="container controls">
-                <div className="git-hub" onClick={() => {
-                    dispatch(actions.fetchLoginGitHub());
-                }}></div>
-                <div className="google" onClick={() => {
-                    dispatch(actions.fetchLoginGoogle());
-                }}></div>
-                <FormControl
-                    type="submit"
-                    value="Login">
-                </FormControl>
-                <FormControl
-                    type="reset"
-                    value="Cancel" 
-                    className="cancelbtn"
-                    onClick={() => {
-                        console.log('canseled');
-                        dispatch(actions.canselSignIn())
-                    }}
-                >
-                </FormControl>
-            </div>
-        </form>
-    );
+    formOnSubmit(e) {
+        const { isCorrect, userName, password } = this.props.formSignIn;
+        const { login } = this.props.pageActions;
+        e.preventDefault();
+        if (isCorrect) {
+            login(userName, password);
+        }
+    }
+    action(actionType) {
+        const { actionCreator } = this.props.pageActions;
+        return (e) => { actionCreator(actionType, e.target.value)}
+    }
+    error(isTyped, isCorrect, errMessage) {
+        if (isTyped) {
+            return isCorrect ? '' : errMessage;
+        } 
+        return '';
+    }
 }
 
 const mapStateToProps = (state) => {
     return state;
 }
 
-FormSignIn = connect(mapStateToProps)(FormSignIn);
+const mapActionsToProps = (dispatch) => {
+    return {
+        pageActions: bindActionCreators(actions, dispatch),
+    }
+}
+
+FormSignIn = connect(mapStateToProps, mapActionsToProps)(FormSignIn);
 
 export default FormSignIn;

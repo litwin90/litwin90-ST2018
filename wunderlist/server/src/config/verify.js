@@ -1,29 +1,24 @@
-const debug = require('debug')('app:verify');
-const chalk = require('chalk');
 const Account = require('./models/account');
 
 module.exports = service => (accessToken, refreshToken, profile, cb) => {
-    debug('passport callback fired');
-    (async function createAccaunt() {
-        try {
-            const id = `${service}id`;
-            debug(`service: ${service}`);
-            debug(`id: ${id}`);
-            let accaunt = await Account.findOne({ [id]: profile.id });
-            if (accaunt) {
-                debug(`user ${chalk.green(accaunt.username)} already insist in db`);
-                cb(null, accaunt);
-            } else {
-                accaunt = await new Account({
-                    username: profile.displayName,
-                    [id]: profile.id,
-                }).save();
-                debug(`add new user to db : ${chalk.green(accaunt.username)}`);
-                cb(null, accaunt);
-            }
-        } catch (err) {
-            debug('can not to find or create user');
-            debug(`Error: ${chalk.red(err)}`);
+    const id = `${service}id`;
+    Account.findOne({ [id]: profile.id }, (err, account) => {
+        if (err) {
+            cb(err, account);
         }
-    }());
+        if (account) {
+            cb(null, account);
+        } else {
+            Account.create({
+                username: profile.displayName,
+                [id]: profile.id,
+            // eslint-disable-next-line no-shadow
+            }, (err, account) => {
+                if (err) {
+                    cb(err, account);
+                }
+                cb(null, account);
+            });
+        }
+    });
 };

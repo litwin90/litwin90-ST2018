@@ -1,278 +1,54 @@
 import * as actionTypes from './actionTypes';
 import config from '../config';
-import fetch from 'isomorphic-fetch'
+import asyncPost from './helpers/asyncPost';
+import asyncGet from './helpers/asyncGet';
 
-const url = config.server + config.port;
+const { server, port, signIn, signOut, signUp } = config;
 
-export function changeNameRegister(name) {
-    return {
-        type: actionTypes.CHANGE_NAME_SIGN_UP,
-        userName: name,
-    }
+export function actionCreator(type, payload) {
+    return { type, payload };
 }
 
-export function changeNameLogin(name) {
-    return {
-        type: actionTypes.CHANGE_NAME_SIGN_IN,
-        userName: name,
-    }
+export function register(userName, password1, password2) {
+    const configuration = {
+        url: server + port + signUp,
+        data: { username: userName, password: password1, passwordRepeat: password2 },
+        success: actionTypes.FETCH_REGISTER_SUCCESS,
+        failure: actionTypes.FETCH_REGISTER_FAILURE,
+        action: actionTypes.FETCH_REGISTER_REQUEST,
+    };
+    return asyncPost(configuration, actionCreator);
 }
 
-
-export function changePassword(psw) {
-    return {
-        type: actionTypes.CHANGE_PASSWORD,
-        psw,
-    }
+export function login(userName, psw) {
+    const configuration = {
+        url: server + port + signIn,
+        data: { username: userName, password: psw },
+        success: actionTypes.FETCH_LOGIN_SUCCESS,
+        failure: actionTypes.FETCH_LOGIN_FAILURE,
+        action: actionTypes.FETCH_LOGIN_REQUEST,
+    };
+    return asyncPost(configuration, actionCreator);
 }
 
-export function changePsw1(psw1) {
-    return {
-        type: actionTypes.CHANGE_PSW1,
-        psw1,
-    }
+export function logOut() {
+    const configuration = {
+        url: server + port + signOut,
+        success: actionTypes.FETCH_LOGOUT_SUCCESS,
+        failure: actionTypes.FETCH_LOGOUT_FAILURE,
+        prop: 'isLogOuted',
+        action: actionTypes.FETCH_LOGOUT_REQUEST,
+    };
+    return asyncGet(configuration, actionCreator);
 }
 
-export function changePsw2(psw2) {
-    return {
-        type: actionTypes.CHANGE_PSW2,
-        psw2,
-    }
-}
-
-export function canselSignUp() {
-    return {
-        type: actionTypes.CANSEL_SIGN_UP,
-    }
-}
-
-export function canselSignIn() {
-    return {
-        type: actionTypes.CANSEL_SIGN_IN,
-    }
-}
-
-
-// ASYNC REGISTRATION
-export function requestRegister() {
-    return {
-        type: actionTypes.FETCH_REGISTER_REQUEST,
-    }
-}
-
-export function receiveRegistration(responce) {
-    return {
-        type: actionTypes.FETCH_REGISTER_SUCCESS,
-        data: responce,
-    }
-}
-
-export function rejectRegistration(responce) {
-    return {
-        type: actionTypes.FETCH_REGISTER_FAILURE,
-        data: responce,
-    }
-}
-
-// LOGIN
-export function requestLogin() {
-    return {
-        type: actionTypes.FETCH_LOGIN_REQUEST,
-    }
-}
-
-export function receiveLogin(responce) {
-    return {
-        type: actionTypes.FETCH_LOGIN_SUCCESS,
-        data: responce,
-    }
-}
-
-export function rejectLogin(responce) {
-    return {
-        type: actionTypes.FETCH_LOGIN_FAILURE,
-        data: responce,
-    }
-}
-
-// LOGOUT
-export function requestLogOut() {
-    return {
-        type: actionTypes.FETCH_LOGOUT_REQUEST,
-    }
-}
-
-export function receiveLogOut(responce) {
-    return {
-        type: actionTypes.FETCH_LOGOUT_SUCCESS,
-        data: responce,
-    }
-}
-
-export function rejectLogOut(responce) {
-    return {
-        type: actionTypes.FETCH_LOGOUT_FAILURE,
-        data: responce,
-    }
-}
-
-// LOGIN GITHUB
-export function requestLoginGitHub() {
-    return {
-        type: actionTypes.FETCH_LOGIN_GITHUB_REQUEST,
-    }
-}
-
-export function receiveLoginGitHub(responce) {
-    return {
-        type: actionTypes.FETCH_LOGIN_GITHUB_SUCCESS,
-        data: responce,
-    }
-}
-
-export function rejectLoginGitHub(responce) {
-    return {
-        type: actionTypes.FETCH_LOGIN_GITHUB_FAILURE,
-        data: responce,
-    }
-}
-
-// LOGIN GOOGLE
-export function requestLoginGoogle() {
-    return {
-        type: actionTypes.FETCH_LOGIN_GOOGLE_REQUEST,
-    }
-}
-
-export function receiveLoginGoogle(responce) {
-    return {
-        type: actionTypes.FETCH_LOGIN_GOOGLE_SUCCESS,
-        data: responce,
-    }
-}
-
-export function rejectLoginGoogle(responce) {
-    return {
-        type: actionTypes.FETCH_LOGIN_GOOGLE_FAILURE,
-        data: responce,
-    }
-}
-
-// ASYNC ACTIONS
-export function fetchRegister(userName, psw1, psw2) {
-    return function(dispatch) {
-        dispatch(requestRegister());
-        const registerUrl = url + config.signUp;
-        return fetch(registerUrl, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: userName,
-                password: psw1,
-                passwordRepeat: psw2,
-            }),
-        })
-            .then(response => response.json())
-            .then(response => {
-                if (response.username) {
-                    dispatch(receiveRegistration(response))
-                } else {
-                    dispatch(rejectRegistration(response));
-                }
-            })
-    }
-}
-
-export function fetchLogin(userName, psw) {
-    return function(dispatch) {
-        dispatch(requestLogin());
-        const loginUrl = url + config.signIn;
-        return fetch(loginUrl, {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: userName,
-                password: psw,
-            }),
-        })
-            .then(response => response.json())
-            .then(response => {
-                if (response.username) {
-                    dispatch(receiveLogin(response))
-                } else {
-                    dispatch(rejectLogin(response));
-                }
-            })
-    }
-}
-
-export function fetchLogOut() {
-    return function(dispatch) {
-        dispatch(requestLogOut());
-        const logOutUrl = url + config.signOut;
-        return fetch(logOutUrl)
-            .then(response => response.json())
-            .then(response => {
-                if (response.isLogOuted) {
-                    dispatch(receiveLogOut(response))
-                } else {
-                    dispatch(rejectLogOut(response));
-                }
-            })
-    }
-}
-
-export function fetchLoginGitHub() {
-    return function(dispatch) {
-        dispatch(requestLoginGitHub());
-        const loginGitHubUrl = url + config.git;
-        return fetch(loginGitHubUrl, {
-            mode: 'no-cors',
-            credentials: 'include'
-        })
-        .then(responce => responce.json())
-        .then(response => {
-            console.log(response);
-        })
-        // .then(response => {
-        //     // console.log(response);
-        //     // return response.json();
-        //     fetch('http://localhost:4000/auth/profile')
-        //     .then(response => {
-        //         document.body.innerHTML = response.text();
-        //     })
-        // });
-        // .then(response => {
-        //     if (response.username) {
-        //         dispatch(receiveLoginGitHub(response))
-        //     } else {
-        //         dispatch(rejectLoginGitHub(response));
-        //     }
-        // });
-    }
-}
-
-export function fetchLoginGoogle() {
-    return function(dispatch) {
-        dispatch(requestLoginGitHub());
-        const loginGitHubUrl = url + config.git;
-        return fetch(loginGitHubUrl, {
-            credentials: 'include',
-            mode: 'no-cors',
-        })
-        //     .then(response => response.json())
-        //     .then(response => {
-        //     if (response.username) {
-        //         dispatch(receiveLoginGoogle(response))
-        //     } else {
-        //         dispatch(rejectLoginGoogle(response));
-        //     }
-        // })
-    }
+export function getSession() {
+    const configuration = {
+        url: server + port + config.getSession,
+        success: actionTypes.FETCH_SESSION_SUCCESS,
+        failure: actionTypes.FETCH_SESSION_FAILURE,
+        prop: 'username',
+        action: actionTypes.FETCH_SESSION_REQUEST,
+    };
+    return asyncGet(configuration, actionCreator);
 }

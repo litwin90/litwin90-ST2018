@@ -53,7 +53,7 @@
 
 /* Set a style for the submit/register button */
 .register-form .registerbtn,
-.register-form .cancelbtn,
+.register-form button,
 .login button,
 .login a.register{
     display: block;

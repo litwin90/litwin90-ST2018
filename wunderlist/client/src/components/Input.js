@@ -1,7 +1,6 @@
 import React from "react";
 
-// props
-const Input = ({ header, type, name, plaseHolder, onChange, onBlur, error }) => (
+const Input = ({ header, type, name, plaseHolder, onChange, onBlur, error, displayState }) => (
     <label><b>{header}</b>
         <input 
             type={type} 
@@ -11,7 +10,7 @@ const Input = ({ header, type, name, plaseHolder, onChange, onBlur, error }) => 
             onBlur = {onBlur}
             className={(error) ? ('invalid') : ('')}
         />
-        <div className="errorContainer" style={{display: (error) ? ('block') : ('none')}}>
+        <div className="errorContainer" style={{display: displayState}}>
             <p className="error">{error}</p>
         </div>
     </label>

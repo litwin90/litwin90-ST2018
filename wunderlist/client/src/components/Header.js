@@ -1,17 +1,20 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { withRouter } from "react-router";
+import React from 'react' ;
+import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router';
+import constants from './constants';
 
-let Header = ({ userName, isLoggedIn, onClick, registerErr, location }) => {
+
+let linkHref;
+let linkText;
+
+const Header = withRouter(({ userName, isLoggedIn, onClick, registerErr, location }) => {
     const currentLocation = location.pathname;
-    let linkHref;
-    let linkText;
-    if (currentLocation === '/signin') {
-        linkHref = '/';
-        linkText = 'Register';
+    if (currentLocation === constants.locations.signin) {
+        linkHref = constants.locations.home;
+        linkText = constants.linkValues.register;
     } else {
-        linkHref = '/signin';
-        linkText = 'Login';
+        linkHref = constants.locations.signin;
+        linkText = constants.linkValues.login;
     }
     if (!isLoggedIn) {
         return (
@@ -28,8 +31,6 @@ let Header = ({ userName, isLoggedIn, onClick, registerErr, location }) => {
             </header>
         )
     }
-};
-
-Header = withRouter(Header);
+});
 
 export default Header;

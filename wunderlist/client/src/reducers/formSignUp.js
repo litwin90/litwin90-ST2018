@@ -1,36 +1,51 @@
-import initialState from './initialState';
-import { CHANGE_NAME_SIGN_UP, CHANGE_PSW1, CHANGE_PSW2, CANSEL_SIGN_UP } from '../actions/actionTypes';
+import { CHANGE_NAME_SIGN_UP, CHANGE_PASSWORD_1, CHANGE_PASSWORD_2, CANCEL_SIGN_UP } from '../actions/actionTypes';
 import config from '../config';
-const { regexName, regexPsw } = config;
+const { regexName, regexPassword } = config;
 
-export default function formSignUp(state = initialState.formSignUp, action) {
+const formSignUpState = {
+    userName: undefined,
+    password1: undefined,
+    password2: undefined,
+    
+    nameIsCorrect: false,
+    password1IsCorrect: false,
+    password2IsCorrect: false,
+
+    nameIsTyped: false,
+    password1IsTyped: false,
+    password2IsTyped: false,
+
+    isCorrect: false,
+}
+
+export default function formSignUp(state = formSignUpState, action) {
     switch (action.type) {
         case(CHANGE_NAME_SIGN_UP):
-            const nameIsCorrect = regexName.test(action.userName);
+            const nameIsCorrect = regexName.test(action.payload);
             return Object.assign({}, state, {
-                userName: action.userName,
+                userName: action.payload,
                 nameIsCorrect,
                 nameIsTyped: true,
             });
-        case(CHANGE_PSW1):
-            const psw1IsCorrect = regexPsw.test(action.psw1);
+        case(CHANGE_PASSWORD_1):
+            const password1IsCorrect = regexPassword.test(action.payload);
             return Object.assign({}, state, {
-                psw1: action.psw1,
-                psw1IsCorrect,
-                psw1IsTyped: true,
+                password1: action.payload,
+                password1IsCorrect,
+                password1IsTyped: true,
             });
-        case(CHANGE_PSW2):
-            const psw2IsCorrect = regexPsw.test(action.psw2);
-            const passwordsMatch = state.psw1 === action.psw2;
+        case(CHANGE_PASSWORD_2):
+            const password2IsCorrect = regexPassword.test(action.payload);
+            const passwordsMatch = state.password1 === action.payload;
             const isCorrect = passwordsMatch && state.nameIsCorrect;
             return Object.assign({}, state, {
-                psw2: action.psw2,
-                psw2IsCorrect,
-                psw2IsTyped: true,
+                password2: action.payload,
+                password2IsCorrect,
+                password2IsTyped: true,
                 isCorrect,
             });
-        case(CANSEL_SIGN_UP):
-            return Object.assign({}, initialState.formSignUp);
+        case(CANCEL_SIGN_UP):
+            return Object.assign({}, formSignUpState);
         default:
             return state;
     }
