@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux'
 import * as actions from '../actions/actionCreators';
-import { CHANGE_NAME_SIGN_UP, CHANGE_PSW1, CHANGE_PSW2, CANCEL_SIGN_UP } from '../actions/actionTypes';
+import { CHANGE_NAME_SIGN_UP, CHANGE_PASSWORD_1, CHANGE_PASSWORD_2, CANCEL_SIGN_UP } from '../actions/actionTypes';
 import constants from './constants';
 import config from '../config';
 import Form from './Form';
@@ -14,11 +14,11 @@ class FormSignUp extends Component {
         const googleUrl = config.server + config.port + config.google;
         const {
             nameIsTyped,
-            psw1IsTyped,
-            psw2IsTyped,
+            password1IsTyped,
+            password2IsTyped,
             nameIsCorrect,
-            psw1IsCorrect,
-            psw2IsCorrect,
+            password1IsCorrect,
+            password2IsCorrect,
         } = this.props.formSignUp;
         return (
             <Form
@@ -41,16 +41,16 @@ class FormSignUp extends Component {
                         type: "password", 
                         name: "password",
                         plaseHolder: "Enter password",
-                        onChange: this.action.call(this, CHANGE_PSW1),
-                        error: this.error.call(this, psw1IsTyped, psw1IsCorrect, constants.passwordError ), 
+                        onChange: this.action.call(this, CHANGE_PASSWORD_1),
+                        error: this.error.call(this, password1IsTyped, password1IsCorrect, constants.passwordError ), 
                     },
                     {
                         header: "Repeat Password", 
                         type: "password", 
                         name: "passwordRepeat",
                         plaseHolder: "Repeat password",
-                        onChange: this.action.call(this, CHANGE_PSW2),
-                        error: this.error.call(this, psw2IsTyped, psw2IsCorrect, constants.passwordError ), 
+                        onChange: this.action.call(this, CHANGE_PASSWORD_2),
+                        error: this.error.call(this, password2IsTyped, password2IsCorrect, constants.passwordError ), 
                     }
                 ]}
                 gitUrl={gitUrl}
@@ -63,11 +63,11 @@ class FormSignUp extends Component {
         );
     }
     formOnSubmit(e) {
-        const { isCorrect, userName, psw1, psw2 } = this.props.formSignUp;
+        const { isCorrect, userName, password1, password2 } = this.props.formSignUp;
         const { register } = this.props.pageActions;
         e.preventDefault();
         if (isCorrect) {
-            register(userName, psw1, psw2);
+            register(userName, password1, password2);
         }
     }
     action(actionType) {

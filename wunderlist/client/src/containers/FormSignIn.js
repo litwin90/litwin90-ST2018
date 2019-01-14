@@ -10,7 +10,13 @@ import Form from './Form';
 class FormSignIn extends Component {
     render() {
         const { display } = this.props.registration;
-        const { pswIsTyped, pswIsCorrect, nameIsTyped, nameIsCorrect } = this.props.formSignIn;
+        const 
+        { 
+            passwordIsTyped,
+            passwordIsCorrect,
+            nameIsTyped,
+            nameIsCorrect,
+        } = this.props.formSignIn;
         const gitUrl = config.server + config.port + config.git;
         const googleUrl = config.server + config.port + config.google;
         return (
@@ -34,7 +40,7 @@ class FormSignIn extends Component {
                         name: "password",
                         plaseHolder: "Enter password",
                         onChange: this.action.call(this, CHANGE_PASSWORD),
-                        error: this.error.call(this, pswIsTyped, pswIsCorrect, constants.passwordError ), 
+                        error: this.error.call(this, passwordIsTyped, passwordIsCorrect, constants.passwordError ),
                     },
                 ]}
                 gitUrl={gitUrl}
@@ -48,11 +54,11 @@ class FormSignIn extends Component {
         ); 
     }
     formOnSubmit(e) {
-        const { isCorrect, userName, psw } = this.props.formSignIn;
+        const { isCorrect, userName, password } = this.props.formSignIn;
         const { login } = this.props.pageActions;
         e.preventDefault();
         if (isCorrect) {
-            login(userName, psw);
+            login(userName, password);
         }
     }
     action(actionType) {

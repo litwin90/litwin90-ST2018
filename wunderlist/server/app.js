@@ -34,8 +34,10 @@ app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
 const authRouts = require('./src/routes/authRoutes')();
+const apiRouts = require('./src/routes/apiRoutes')();
 
 app.use('/auth', authRouts);
+app.use('/api', apiRouts);
 
 app.get('/', (req, res) => {
     if (req.user) {

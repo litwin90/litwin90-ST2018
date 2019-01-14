@@ -84,7 +84,7 @@ function authController() {
             },
         );
         req.logOut();
-        res.send(JSON.stringify({ isLogOuted: true }));
+        res.status(200).send(JSON.stringify({ isLogOuted: true }));
     }
     function auth(req, res, service) {
         passport.authenticate(service, {
