@@ -19,12 +19,24 @@ const {
 
 function apiController() {
     function accountMiddleWare(req, res, next) {
+        res.set(
+            {
+                'Access-Control-Allow-Origin': 'http://localhost:3000',
+                'Access-Control-Allow-Credentials': true,
+            },
+        );
         if (!req.user) {
             return res.status(FORBIDDEN).send('User is not logged in');
         }
         next();
     }
     function listMiddleWare(req, res, next) {
+        res.set(
+            {
+                'Access-Control-Allow-Origin': 'http://localhost:3000',
+                'Access-Control-Allow-Credentials': true,
+            },
+        );
         if (!req.user) {
             return res.status(FORBIDDEN).send('User is not logged in');
         }
@@ -38,7 +50,7 @@ function apiController() {
 
         Account.findOne({ _id: req.user._id, lists: { $in: currentListId } }, (err, account) => {
             if (err) {
-                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
             }
             if (!account) {
                 return res.status(FORBIDDEN).send('you have not permissions for requested list');
@@ -54,7 +66,7 @@ function apiController() {
         const currentListId = req.params.listId;
         Account.findOne({ _id: req.user._id, lists: { $in: currentListId } }, (err, account) => {
             if (err) {
-                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
             }
             if (!account) {
                 return res.status(FORBIDDEN).send('you have not permissions for requested list');
@@ -64,7 +76,7 @@ function apiController() {
             const currentTodoId = req.params.id;
             List.findOne({ _id: currentListId, todos: { $in: currentTodoId } }, (err, list) => {
                 if (err) {
-                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                 }
                 if (!list) {
                     return res.status(FORBIDDEN).send('you have not permissions for requested list');
@@ -92,9 +104,9 @@ function apiController() {
             }
             passport.authenticate('local')(req, res, (err) => {
                 if (err) {
-                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                 }
-                return res.status(CREATED).send('Sign up successfully');
+                return res.status(CREATED).json({ status: 'OK' });
             });
         });
     }
@@ -109,41 +121,47 @@ function apiController() {
 
         Account.findOne({ _id: req.user._id }, (err, account) => {
             if (err) {
-                return res.status(BAD_REQUEST).send(err.message);
+                return res.status(BAD_REQUEST).json({ error: err.message });
             }
             account.update(req.body, { runValidators: true }, (err) => {
                 if (err) {
-                    return res.status(BAD_REQUEST).send(err.message);
+                    return res.status(BAD_REQUEST).json({ error: err.message });
                 }
-                return res.status(OK).send('user updated');
+                return res.status(OK).json({ status: 'OK' });
             });
         });
     }
     function deleteAccount(req, res) {
         Account.findById(req.user._id, (err, account) => {
             if (err) {
-                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
             }
             account.remove((err) => {
                 if (err) {
-                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                 }
-                return res.status(OK).send('account removed');
+                return res.status(OK).json({ status: 'OK' });
             });
         });
     }
     function createList(req, res) {
+        res.set(
+            {
+                'Access-Control-Allow-Origin': 'http://localhost:3000',
+                'Access-Control-Allow-Credentials': true,
+            },
+        );
         List.create({
             accounts: req.user._id,
             name: req.body.name,
         }, (err) => {
             if (err) {
                 if (err.code === 11000) {
-                    return res.status(CONFLICT).send(err.message);
+                    return res.status(CONFLICT).json({ error: err.message });
                 }
-                return res.status(BAD_REQUEST).send(err.message);
+                return res.status(BAD_REQUEST).json({ error: err.message });
             }
-            return res.status(CREATED).send('list created');
+            return res.status(CREATED).json({ username: req.user.username });
         });
     }
     function getLists(req, res) {
@@ -151,7 +169,7 @@ function apiController() {
             .populate('lists')
             .exec((err, account) => {
                 if (err) {
-                    res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                 }
                 res.status(OK).json(account.lists);
             });
@@ -164,7 +182,7 @@ function apiController() {
             })
             .exec((err, account) => {
                 if (err) {
-                    return res.status(BAD_REQUEST).send(err.message);
+                    return res.status(BAD_REQUEST).json({ error: err.message });
                 }
                 return res.status(OK).json(account.lists[0]);
             });
@@ -182,31 +200,31 @@ function apiController() {
             })
             .exec((err, account) => {
                 if (err) {
-                    return res.status(BAD_REQUEST).send(err.message);
+                    return res.status(BAD_REQUEST).json({ error: err.message });
                 }
                 const list = account.lists[0];
 
                 list.update(req.body, { runValidators: true }, (err) => {
                     if (err) {
                         if (err.code === 'E11000') {
-                            return res.status(CONFLICT).send(err.message);
+                            return res.status(CONFLICT).json({ error: err.message });
                         }
-                        return res.status(BAD_REQUEST).send(err.message);
+                        return res.status(BAD_REQUEST).json({ error: err.message });
                     }
-                    return res.status(OK).send('list updated');
+                    return res.status(OK).json({ status: 'OK' });
                 });
             });
     }
     function deleteListBuId(req, res) {
         List.findById(req.params.id, (err, list) => {
             if (err) {
-                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
             }
             list.remove((err) => {
                 if (err) {
-                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                 }
-                return res.status(OK).send('list removed');
+                return res.status(OK).json({ status: 'OK' });
             });
         });
     }
@@ -216,11 +234,11 @@ function apiController() {
             if (err) {
                 debug(err.message);
                 if (err.code === 11000) {
-                    return res.status(CONFLICT).send(err.message);
+                    return res.status(CONFLICT).json({ error: err.message });
                 }
-                return res.status(BAD_REQUEST).send(err.message);
+                return res.status(BAD_REQUEST).json({ error: err.message });
             }
-            return res.status(CREATED).send('todo created');
+            return res.status(CREATED).json({ username: req.user.username });
         });
     }
     function getTodos(req, res) {
@@ -229,7 +247,7 @@ function apiController() {
             .exec((err, list) => {
                 if (err) {
                     debug(err.message);
-                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                 }
                 return res.status(OK).json(list.todos);
             });
@@ -238,7 +256,7 @@ function apiController() {
         Todo.findById(req.params.id, (err, todo) => {
             if (err) {
                 debug(err.message);
-                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
             }
             return res.status(OK).json(todo);
         });
@@ -252,12 +270,12 @@ function apiController() {
         Todo.findById(req.params.id, (err, todo) => {
             if (err) {
                 debug(err.message);
-                return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
             }
             todo.update(req.body, (err) => {
                 if (err) {
                     debug(err.message);
-                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                 }
                 return res.status(OK).send('updated');
             });
@@ -267,12 +285,12 @@ function apiController() {
         Todo.findById(req.params.id)
             .exec((err, todo) => {
                 if (err) {
-                    return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                    return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                 }
 
                 todo.remove((err) => {
                     if (err) {
-                        return res.status(INTERNAL_SERVER_ERROR).send(err.message);
+                        return res.status(INTERNAL_SERVER_ERROR).json({ error: err.message });
                     }
                     return res.status(OK).send('updated');
                 });

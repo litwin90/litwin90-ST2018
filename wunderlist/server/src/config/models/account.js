@@ -31,7 +31,6 @@ const Account = new Schema({
             },
             message: props => `${props.value} is not a valid password!`,
         },
-        required: true,
     },
     googleid: String,
     githubid: String,

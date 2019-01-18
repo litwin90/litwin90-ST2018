@@ -17,6 +17,10 @@ const Todo = new Schema({
         ref: 'List',
         required: true,
     },
+    complited: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 Todo.pre('update', updateVersionKey);

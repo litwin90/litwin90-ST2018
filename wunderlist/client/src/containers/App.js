@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import FormSignIn from './FormSignIn';
 import FormSignUp from './FormSignUp';
 import Header from '../components/Header';
+import Main from './Main';
 import * as actions from '../actions/actionCreators';
 
 class App extends Component {
@@ -20,15 +21,19 @@ class App extends Component {
                         onClick={this.logOut.bind(this)}
                         registerErr={registerErr}
                     />
-                    <Route exact path="/" component={FormSignUp} />
-                    <Route path="/signin" render={this.displayForm.bind(this)}/>
+                    <Route exact path="/" component={this.displayMain.bind(this)} />
+                    <Route path="/signin" render={this.displayLogin.bind(this)}/>
                 </div>
             </Router>
         );
     }
-    displayForm() {
+    displayLogin() {
         const { isLoggedIn } = this.props;
         return isLoggedIn ? (<Redirect to="/"/>) : (<FormSignIn/>);
+    }
+    displayMain() {
+        const { isLoggedIn } = this.props;
+        return isLoggedIn ? <Main/> : <FormSignUp/>;
     }
     logOut() {
         const { logOut } = this.props.pageActions;

@@ -17,6 +17,13 @@ module.exports = function passportConfig(app) {
     passport.use(new GitHubStrategy(keys.github, verify('github')));
     passport.use(new GoogleStrategy(keys.google, verify('google')));
 
-    passport.serializeUser(Account.serializeUser());
-    passport.deserializeUser(Account.deserializeUser());
+    passport.serializeUser((account, done) => {
+        done(null, account.id);
+    });
+    passport.deserializeUser((id, done) => {
+        Account.findById(id, (err, account) => {
+            // eslint-disable-next-line no-unused-expressions
+            err ? done(err) : done(null, account);
+        });
+    });
 };

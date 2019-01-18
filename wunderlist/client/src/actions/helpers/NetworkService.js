@@ -11,6 +11,7 @@ NetworkService.post = ({ dispatch, url, data, success, failure }) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
+        credentials: 'include',
     })
         .then(response => response.json())
         .then(response => {
@@ -20,6 +21,44 @@ NetworkService.post = ({ dispatch, url, data, success, failure }) => {
                 dispatch(actionCreator(failure, response));
             }
         })
+        .catch(error => console.log(error.message));
+}
+
+NetworkService.put = ({ dispatch, url, data, success, failure }) => {
+    return fetch(url, {
+        method: 'PUT',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        credentials: 'include',
+    })
+        .then(response => response.json())
+        .then(response => {
+            dispatch(actionCreator(success, response));
+        })
+        .catch(error => {
+            dispatch(actionCreator(failure));
+        });
+}
+
+NetworkService.delete = ({ dispatch, url, success, failure }) => {
+    return fetch(url, {
+        method: 'DELETE',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    })
+        .then(response => response.json())
+        .then(response => {
+            dispatch(actionCreator(success, response));
+        })
+        .catch(error => {
+            dispatch(actionCreator(failure));
+        });
 }
 
 NetworkService.get = ({ dispatch, url, success, failure, prop , fetchConfig }) => {
@@ -31,5 +70,6 @@ NetworkService.get = ({ dispatch, url, success, failure, prop , fetchConfig }) =
             } else {
                 dispatch(actionCreator(failure, response));
             }
-        });
+        })
+        .catch(error => console.log(error.message));
 }

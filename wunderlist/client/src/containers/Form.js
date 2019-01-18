@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Input from '../components/Input';
-import FormControl from '../components/FormControl';
+import Control from '../components/Control';
 
 class Form extends Component {
     render(){
@@ -33,19 +33,19 @@ class Form extends Component {
                 <div className="container controls">
                     <a href={gitUrl}><div className="git-hub"></div></a>
                     <a href={googleUrl}><div className="google"></div></a>
-                    <FormControl
+                    <Control
                         type="submit"
                         value={submit.text}
                         className={submit.className}
                     >
-                    </FormControl>
-                    <FormControl
+                    </Control>
+                    <Control
                         type="reset"
                         value="Cancel" 
                         className="cancelbtn"
                         onClick={cancel}
                     >
-                    </FormControl>
+                    </Control>
                 </div>
             </form>
         );

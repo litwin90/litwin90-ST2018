@@ -72,6 +72,12 @@ function authController() {
                     return res.send(JSON.stringify({ error: req.session.errMess }));
                 }
                 req.session.errMess = '';
+                res.set(
+                    {
+                        'Access-Control-Allow-Origin': 'http://localhost:3000',
+                        'Access-Control-Allow-Credentials': true,
+                    },
+                );
                 return res.send(JSON.stringify(req.user));
             });
         })(req, res);
@@ -91,23 +97,23 @@ function authController() {
             scope: ['profile'],
         })(req, res);
     }
-    function authCb(req, res, service) {
+    function authCb(req, res, next, service) {
         passport.authenticate(service, {
             failureRedirect: 'http://localhost:3000/signin',
             successRedirect: 'http://localhost:3000',
-        })(req, res);
+        })(req, res, next);
     }
     function github(req, res) {
         auth(req, res, 'github');
     }
-    function githubCallBack(req, res) {
-        authCb(req, res, 'github');
+    function githubCallBack(req, res, next) {
+        authCb(req, res, next, 'github');
     }
     function google(req, res) {
         auth(req, res, 'google');
     }
-    function googleCb(req, res) {
-        authCb(req, res, 'google');
+    function googleCb(req, res, next) {
+        authCb(req, res, next, 'google');
     }
     function signInUpMiddlewere(req, res, next) {
         if (req.user) {
